@@ -1,9 +1,25 @@
 import { useForm, useFormContext } from "react-hook-form";
 import DatePicker from "./DatePicker";
 import { Button, TextInput, Label, Textarea, Tooltip } from "flowbite-react";
-import { FaTrash, FaPlus, FaInfoCircle } from "react-icons/fa";
+import { FaTrash, FaPlus } from "react-icons/fa";
 import { useFieldArray, FormProvider } from "react-hook-form";
+import { api } from "../utils/api";
+import { useRouter } from "next/router";
 export default function () {
+    const mutation = api.invitation.create.useMutation();
+    const router = useRouter();
+    const submit = async (data: {
+        title: string;
+        date: Date;
+        description: string;
+        guests: {
+            name: string;
+        }[];
+    }) => {
+        await mutation.mutateAsync(data);
+        router.push('/')
+    }
+
     const methods = useForm({
         defaultValues: {
             title: "",
@@ -15,7 +31,7 @@ export default function () {
 
     return (
         <FormProvider {...methods} >
-            <form onSubmit={methods.handleSubmit(async (data, e) => console.log({ data }))} >
+            <form onSubmit={methods.handleSubmit(submit)} >
                 <div>
                     <div className="mb-2 flex items-center">
                         <Label htmlFor="title" value="Title" />
@@ -54,7 +70,7 @@ export default function () {
 function GuestsInput() {
 
     const methods = useFormContext();
-    const { fields, insert, remove } = useFieldArray({
+    const { fields, insert, remove, replace } = useFieldArray({
         control: methods.control,
         name: "guests",
         rules: {
@@ -67,10 +83,19 @@ function GuestsInput() {
                 <Label htmlFor="g" value="Guests" className="text-lg" />
             </div>
         </div>
-        <Button className="bg-gradient-to-r from-purple-500 to-blue-500"
-            outline={true}
-            onClick={() => insert(0, { name: "" })}
-        >Add Guest<FaPlus className="ml-5" /></Button>
+        <div className="flex items-center justify-between">
+            <Button className="bg-gradient-to-r from-purple-500 to-blue-500"
+                outline={true}
+                onClick={() => insert(0, { name: "" })}
+            >Add guest<FaPlus className="ml-5" /></Button>
+            <h2>{fields.length}</h2>
+            <Button
+                className="bg-gradient-to-r from-gray-400 to-gray-400"
+                outline={true}
+                onClick={() => replace([{ name: "" }])}
+            >Clear all<FaTrash className="ml-5" /></Button>
+        </div>
+
         {fields.map((field, index) => (
             <div className={`${fields.length === 1 ? `block` : `flex`} h-fit items-center mt-2 mb-2 max-[640px]:w-full`} key={field.id}>
                 <TextInput

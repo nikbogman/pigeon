@@ -1,9 +1,10 @@
-import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+// Prisma adapter for NextAuth, optional and can be removed
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
 import { env } from "../../../env/server.mjs";
-import clientPromise from "../../../lib/mongodb";
+import { prisma } from "../../../server/db";
 
 export const authOptions: NextAuthOptions = {
   // Include user.id on session
@@ -15,15 +16,18 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
+
+  // Configure one or more authentication providers
+  adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
     }),
+
   ],
-  adapter: MongoDBAdapter(clientPromise),
   pages: {
-    signIn: "/auth/singIn"
+    signIn: '/auth/signIn'
   }
 };
 

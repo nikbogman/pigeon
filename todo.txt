@@ -1,12 +1,13 @@
 TODO:
-[] add hour to form
-[] add picture to form
-[x] add mongo addapter to nextauth
 [x] map SignIn page to nextauth
-[] api create invitation
-[] api view invitation
-[] invitations view
-[] /id invitation view
+[x] api create invitation
+[x] api view invitation
+[x] invitations view
+[x] /id invitation view
 [] /id/guest invitation for guest guest
+[] make text large
 
-![] add mongoose 
+[] change a auth jwt to use middleware
+[] order by most recent made -> add createdAt in prisma
+[x] modal on delete for /id invitation view
+[x] qr codes
