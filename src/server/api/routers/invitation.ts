@@ -61,5 +61,30 @@ export const invitationRouter = createTRPCRouter({
             return ctx.prisma.invitation.deleteMany({
                 where: { id: input, userId: ctx.session.user.id }
             })
+        }),
+    changeAttendance: publicProcedure
+        .input(z.string())
+        .mutation(({ input, ctx }) => {
+            return ctx.prisma.guest.update({
+                where: { id: input },
+                data: { attending: true }
+            })
+        }),
+
+    getAsGuest: publicProcedure
+        .input(z.object({
+            guestId: z.string(),
+            invitationId: z.string()
+        }))
+        .query(({ input, ctx }) => {
+            return ctx.prisma.guest.findFirstOrThrow({
+                where: {
+                    id: input.guestId,
+                    invitationId: input.invitationId
+                },
+                include: {
+                    invitation: true
+                }
+            })
         })
 });

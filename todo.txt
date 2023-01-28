@@ -7,7 +7,15 @@ TODO:
 [] /id/guest invitation for guest guest
 [] make text large
 
+
+[x] modal on delete for /id invitation view
+[x] qr code components
+
+
 [] change a auth jwt to use middleware
 [] order by most recent made -> add createdAt in prisma
-[x] modal on delete for /id invitation view
-[x] qr codes
+
+[] handle 404 in paths 
+
+[] setup trpc for createSSGHelpers
+[] change routes

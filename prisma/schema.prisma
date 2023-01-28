@@ -82,5 +82,5 @@ model Guest {
     name         String
     attending    Boolean    @default(false)
 
-    @@id([invitationId, name])
+    id String @id @default(cuid())
 }

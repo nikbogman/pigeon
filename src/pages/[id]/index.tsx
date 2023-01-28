@@ -10,6 +10,7 @@ import QrModal from "../../components/QrModal";
 import QrDownload from "../../components/QrDownload";
 
 
+
 export default function () {
     const { query } = useRouter();
     const invitation = api.invitation.getById.useQuery(query.id! as string);
