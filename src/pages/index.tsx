@@ -23,7 +23,7 @@ const Home: NextPage = () => {
       <Layout>
         <main className="mt-20 mb-16 px-2">
           {invitations.data ? invitations.data.map((el, i: number) => (
-            <Link href={el.id}>
+            <Link href={`/invitations/${el.id}`} >
               <InvitationCard title={el.title} description={el.description} date={el.date} guestCount={el._count.guests} />
             </Link>
           )) : <h1>You have no invitations created. Press the button to do so.</h1>}

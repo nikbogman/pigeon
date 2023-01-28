@@ -19,7 +19,7 @@ export default function ({ name, url }: IProps) {
             show={open}
             size="xl"
             popup={true}
-            className="h-screen flex justify-center items-center"
+            className="modal"
             onClose={() => setOpen(false)}
         >
             <Modal.Header />
