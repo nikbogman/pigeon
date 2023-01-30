@@ -1,4 +1,4 @@
-import Datepicker from "tailwind-datepicker-react"
+import Datepicker from "tailwind-datepicker-react";
 import { useState } from "react";
 
 const options = {
@@ -22,7 +22,7 @@ const options = {
     datepickerClassNames: "top-12",
     defaultDate: undefined,
     language: "en",
-}
+} as const;
 
 interface IProps {
     setDate: (v: Date) => void;
@@ -30,9 +30,10 @@ interface IProps {
 export default function ({ setDate }: IProps) {
     const [show, setShow] = useState<boolean>(false);
 
-    const handleChange = (selectedDate: Date) => setDate(selectedDate);
-
-    const handleClose = (state: boolean) => setShow(state);
-
-    return <Datepicker options={options} onChange={handleChange} show={show} setShow={handleClose} />
+    return <Datepicker
+        options={options}
+        onChange={(selectedDate: Date) => setDate(selectedDate)}
+        show={show}
+        setShow={(state: boolean) => setShow(state)}
+    />
 }

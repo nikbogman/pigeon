@@ -14,7 +14,7 @@ export default function ({ children }: IProps) {
 
     return <>
         <div className="fixed z-10 inset-x-0 top-0 w-full">
-            <div className="flex justify-between bg-gradient-to-r from-purple-500 to-blue-500 text-white border border-transparent rounded-lg shadow-md p-2 mx-5 mt-2 items-center">
+            <div className="flex justify-between border bg-gradient-to-br from-purple-600 to-blue-500 text-white rounded-lg shadow-md p-2 mx-5 mt-2 items-center">
                 <p className="flex items-center font-medium"><FaUser className="ml-2 mr-2" />{username}</p>
                 <Button color="light"
                     onClick={() => signOut()}
@@ -22,9 +22,10 @@ export default function ({ children }: IProps) {
             </div>
         </div>
         {children}
-        <Link href={pathname === '/' ? '/form' : '/'}>
-            <Button className="fixed z-50 inset-x-0 bottom-2 mx-5 text-white bg-gradient-to-r from-purple-500 to-blue-500"
-            >{pathname === '/' ? <FaPlus className="w-5 h-5" /> : <FaArrowLeft className="w-5 h-5" />}</Button>
+        <Link href={pathname === '/invitations' ? '/form' : '/invitations'}>
+            <Button className="fixed z-50 inset-x-0 bottom-2 mx-5"
+                gradientDuoTone="purpleToBlue"
+            >{pathname === '/invitations' ? <FaPlus className="w-5 h-5" /> : <FaArrowLeft className="w-5 h-5" />}</Button>
         </Link>
     </>
 }

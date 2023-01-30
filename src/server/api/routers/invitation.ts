@@ -24,6 +24,7 @@ export const invitationRouter = createTRPCRouter({
                 }
             });
         }),
+
     getMine: protectedProcedure.query(({ ctx }) => {
         return ctx.prisma.invitation.findMany({
             where: {
@@ -63,11 +64,14 @@ export const invitationRouter = createTRPCRouter({
             })
         }),
     changeAttendance: publicProcedure
-        .input(z.string())
+        .input(z.object({
+            id: z.string(),
+            attending: z.boolean()
+        }))
         .mutation(({ input, ctx }) => {
             return ctx.prisma.guest.update({
-                where: { id: input },
-                data: { attending: true }
+                where: { id: input.id },
+                data: { attending: input.attending }
             })
         }),
 

@@ -1,15 +1,16 @@
 import { GetStaticPropsContext } from "next";
 import { prisma } from "../../server/db";
-import { Table } from "flowbite-react";
+import { Label, Select, Table } from "flowbite-react";
 import Head from "next/head";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import Layout from "../../components/Layout";
 import { Card } from "flowbite-react";
-import RemoveModal from "../../components/RemoveModal";
+import RemoveModal from "../../components/Modals/RemoveModal";
 import QrModal from "../../components/QrModal";
 import QrDownload from "../../components/QrDownload";
 import { Invitation, Guest } from "@prisma/client";
-
+import { serialize } from "superjson";
+import { useState } from "react";
 export async function getStaticPaths() {
     const invitations: { id: string }[] = await prisma.invitation.findMany({
         where: {},
@@ -29,18 +30,29 @@ export async function getStaticProps({ params }: GetStaticPropsContext) {
         where: { id: params!.id as string },
         include: { guests: true }
     })
-    const copy = {
-        ...invitation, date: invitation?.date.toDateString()
-    }
+
     return {
         props: {
-            invitation: copy
+            invitation: serialize({
+                ...invitation, date: invitation?.date.toDateString()
+            }).json
         },
         revalidate: 10
     }
 }
 
 export default function ({ invitation }: { invitation: Invitation & { guests: Guest[] } & { date: string } }) {
+    const [order, setOrder] = useState<string>('All');
+
+    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => setOrder(e.target.value)
+    const data = (() => {
+        if (order === "Attending") return invitation.guests.filter(g => g.attending === true);
+        if (order === "Not Attending") return invitation.guests.filter(g => g.attending === false);
+        return invitation.guests;
+
+    })()
+
+
     return <>
         <Head>
             <title>{invitation.title}</title>
@@ -57,8 +69,21 @@ export default function ({ invitation }: { invitation: Invitation & { guests: Gu
                     </div>
                     <p className="text-sm">{invitation.description}</p>
                 </Card>
-
-
+                <div className="mb-2 block">
+                    <Label
+                        htmlFor="show"
+                        value="Show: "
+                    />
+                </div>
+                <Select
+                    id="show"
+                    className="w-fit"
+                    onChange={handleChange}
+                >
+                    <option>All</option>
+                    <option>Attending</option>
+                    <option>Not Attending</option>
+                </Select>
                 <Table className="w-full mt-5">
                     <Table.Head>
                         <Table.HeadCell>
@@ -73,7 +98,7 @@ export default function ({ invitation }: { invitation: Invitation & { guests: Gu
                         </Table.HeadCell>
                     </Table.Head>
                     <Table.Body className="divide-y">
-                        {invitation.guests.map((g, i) => (
+                        {data.map((g, i) => (
                             <Table.Row key={i}>
                                 <Table.Cell className="whitespace-nowrap font-medium text-gray-900">
                                     {g.name}

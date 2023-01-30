@@ -15,7 +15,7 @@ export default function (props: IProps) {
         className="mt-5"
     >
         <div className="flex w-full items-center justify-between">
-            <h5 className="text-2xl font-bold  truncate">{props.title}</h5>
+            <h5 className="text-2xl font-bold truncate">{props.title}</h5>
             <FaArrowRight className="text-gray-600" />
         </div>
         <div className="flex w-full items-center text-gray-700 tracking-tight text-xs justify-between">

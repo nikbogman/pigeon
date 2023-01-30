@@ -1,21 +1,46 @@
 TODO:
-[x] map SignIn page to nextauth
-[x] api create invitation
-[x] api view invitation
-[x] invitations view
-[x] /id invitation view
-[] /id/guest invitation for guest guest
-[] make text large
+-> general
+    -> server
+        [x] handle 404 in paths 
+        [] order by
+            [] add createdAt in prisma for most recent
+            [] add for most guests
+        [] handle qrcodes in ssg
+        [] add trpc guest routes
+        [] add more layers like services
+
+    -> auth
+        [x] map SignIn page in NextAuth
+        ? [] change NextAuth to jwt for the use of middleware
+        [] add middleware
+
+    -> design
+        [] work on index page
+        [] make text large
+        [x] qr code components
+
+-> /invitation
+    -> api
+        [x] create
+        [x] get /:id
+    -> view
+        [x] create
+        [x] get /:id
+        [x] modal on delete for /:id
+        [] filter in guest table
+
+-> /guests
+    -> view
+        [-] get invitation /:id 
+            [] better design
+            [] add thank you and sorry pages
 
 
-[x] modal on delete for /id invitation view
-[x] qr code components
 
-
-[] change a auth jwt to use middleware
-[] order by most recent made -> add createdAt in prisma
-
-[] handle 404 in paths 
-
-[] setup trpc for createSSGHelpers
-[] change routes
+order by
+    updated
+    
+show
+    all
+    agreed 
+    disagreed
