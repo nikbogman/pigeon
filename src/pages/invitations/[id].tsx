@@ -11,6 +11,7 @@ import QrDownload from "../../components/QrDownload";
 import { Invitation, Guest } from "@prisma/client";
 import { serialize } from "superjson";
 import { useState } from "react";
+import InputLayout from "../../components/Forms/InputLayout";
 export async function getStaticPaths() {
     const invitations: { id: string }[] = await prisma.invitation.findMany({
         where: {},
@@ -42,14 +43,17 @@ export async function getStaticProps({ params }: GetStaticPropsContext) {
 }
 
 export default function ({ invitation }: { invitation: Invitation & { guests: Guest[] } & { date: string } }) {
-    const [order, setOrder] = useState<string>('All');
+    const [filter, setFilter] = useState<string>('All');
 
-    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => setOrder(e.target.value)
     const data = (() => {
-        if (order === "Attending") return invitation.guests.filter(g => g.attending === true);
-        if (order === "Not Attending") return invitation.guests.filter(g => g.attending === false);
-        return invitation.guests;
-
+        switch (filter) {
+            case "Attending":
+                return invitation.guests.filter(g => g.attending === true);
+            case "Not Attending":
+                return invitation.guests.filter(g => g.attending === false);
+            default:
+                return invitation.guests;
+        }
     })()
 
 
@@ -69,22 +73,22 @@ export default function ({ invitation }: { invitation: Invitation & { guests: Gu
                     </div>
                     <p className="text-sm">{invitation.description}</p>
                 </Card>
-                <div className="mb-2 block">
-                    <Label
-                        htmlFor="show"
-                        value="Show: "
-                    />
+                <div className='mt-5 w-full flex items-center justify-around'>
+                    <div className="mb-2 block">
+                        <Label htmlFor="g" value="Filter" className="text-lg" />
+                    </div>
+                    <Select
+                        id="show"
+                        className="w-fit"
+                        onChange={(e) => setFilter(e.target.value)}
+                    >
+                        <option>All</option>
+                        <option>Attending</option>
+                        <option>Not Attending</option>
+                    </Select>
                 </div>
-                <Select
-                    id="show"
-                    className="w-fit"
-                    onChange={handleChange}
-                >
-                    <option>All</option>
-                    <option>Attending</option>
-                    <option>Not Attending</option>
-                </Select>
-                <Table className="w-full mt-5">
+
+                <Table className="w-full mt-2">
                     <Table.Head>
                         <Table.HeadCell>
                             Name

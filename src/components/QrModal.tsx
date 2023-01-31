@@ -19,7 +19,7 @@ export default function ({ name, url }: IProps) {
             show={open}
             size="xl"
             popup={true}
-            className="modal"
+            style={{ height: '100vh' }}
             onClose={() => setOpen(false)}
         >
             <Modal.Header />

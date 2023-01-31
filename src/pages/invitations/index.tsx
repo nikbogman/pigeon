@@ -1,7 +1,6 @@
 import { Invitation } from "@prisma/client";
 import Head from "next/head";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import InvitationCard from "../../components/Cards/InvitationCard";
 import Layout from "../../components/Layout";
 import { api } from "../../utils/api";
@@ -16,11 +15,11 @@ export default function () {
             <Layout>
                 <main className="mt-20 mb-16 px-2">
                     {invitations.data?.length ? invitations.data.map((el: Invitation & { _count: { guests: number; } }, i: number) => (
-                        <Link href={`/invitations/${el.id}`} >
+                        <Link href={`/invitations/${el.id}`} key={i}>
                             <InvitationCard
                                 title={el.title} description={el.description} date={el.date} guestCount={el._count.guests} />
                         </Link>
-                    )) : <h1>You have no invitations created. Press the button to do so.</h1>}
+                    )) : <h1 className="text-center text-gray-500 font-medium p-10">You have no invitations created. Press the button to do so.</h1>}
                 </main>
             </Layout>
         </>

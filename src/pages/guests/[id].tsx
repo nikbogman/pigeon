@@ -1,6 +1,7 @@
 import { Guest, Invitation } from "@prisma/client";
 import { Button } from "flowbite-react";
 import { GetStaticPropsContext } from "next";
+import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { serialize } from "superjson";
 import { prisma } from "../../server/db";
@@ -35,26 +36,29 @@ export async function getStaticProps({ params }: GetStaticPropsContext) {
 
 export default function ({ guest }: {
     guest: Guest & {
-        invitation: Invitation;
-    } & { date: string }
+        invitation: Invitation & { date: string };
+    } & { updatedAt: string }
 }) {
     const mutation = api.invitation.changeAttendance.useMutation();
     const {
         register,
         handleSubmit,
     } = useForm();
-
+    const router = useRouter();
     const submitEvent = handleSubmit(data => {
         const answer = data.answer === 'yes' ? true : false;
         mutation.mutate({ id: guest.id, attending: answer });
+        router.push('/guests/answers/' + data.answer);
     })
 
     return <>
-        <main className="flex flex-col items-center justify-center p-5 h-screen">
-            <h1>{guest.invitation.title}</h1>
+        <main className="flex flex-col items-center justify-center p-5 h-screen leading-loose">
+            <h1 >{guest.invitation.title}</h1>
             <p>{guest.invitation.description}</p>
-            <form onSubmit={submitEvent}>
-                <ul className="grid grid-cols-2 gap-x-5 m-10 max-w-md mx-auto">
+            <p className="font-light text-xs mt-5">On: <b>{guest.invitation.date}</b></p>
+            <form onSubmit={submitEvent} className="mt-5">
+                <p className="font-semibold">Would you attend this event?</p>
+                <ul className="grid grid-cols-2 gap-x-5 mt-5 mb-10 max-w-md mx-auto">
                     <li className="relative">
                         <input
                             {...register('answer', { required: true })}
@@ -86,7 +90,7 @@ export default function ({ guest }: {
                         </div>
                     </li>
                 </ul>
-                <Button type="submit" className="w-full">submit</Button>
+                <Button type="submit" color="light" className="w-full">Submit</Button>
             </form>
         </main>
     </>

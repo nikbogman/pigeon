@@ -22,7 +22,7 @@ export default function ({ children }: IProps) {
             </div>
         </div>
         {children}
-        <Link href={pathname === '/invitations' ? '/form' : '/invitations'}>
+        <Link href={pathname === '/invitations' ? '/invitations/form' : '/invitations'}>
             <Button className="fixed z-50 inset-x-0 bottom-2 mx-5"
                 gradientDuoTone="purpleToBlue"
             >{pathname === '/invitations' ? <FaPlus className="w-5 h-5" /> : <FaArrowLeft className="w-5 h-5" />}</Button>

@@ -2,8 +2,8 @@ TODO:
 -> general
     -> server
         [x] handle 404 in paths 
-        [] order by
-            [] add createdAt in prisma for most recent
+        [-] order by
+            [x] add createdAt in prisma for most recent
             [] add for most guests
         [] handle qrcodes in ssg
         [] add trpc guest routes
@@ -15,8 +15,10 @@ TODO:
         [] add middleware
 
     -> design
+        [] add loading state for queries
+        [] add favicon
         [] work on index page
-        [] make text large
+        [x] make text large
         [x] qr code components
 
 -> /invitation
@@ -27,20 +29,11 @@ TODO:
         [x] create
         [x] get /:id
         [x] modal on delete for /:id
-        [] filter in guest table
+        [x] filter in guest table
 
 -> /guests
     -> view
-        [-] get invitation /:id 
-            [] better design
-            [] add thank you and sorry pages
+        [x] get invitation /:id 
+            [x] better design
+            [x] add thank you and sorry pages
 
-
-
-order by
-    updated
-    
-show
-    all
-    agreed 
-    disagreed
