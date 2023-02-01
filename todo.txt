@@ -11,13 +11,13 @@ TODO:
 
     -> auth
         [x] map SignIn page in NextAuth
-        ? [] change NextAuth to jwt for the use of middleware
-        [] add middleware
+        [] dry getServerSideProps
 
     -> design
         [] add loading state for queries
-        [] add favicon
+        [x] add favicon
         [] work on index page
+        [] switch to daisy ui
         [x] make text large
         [x] qr code components
 

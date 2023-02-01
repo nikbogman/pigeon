@@ -6,7 +6,11 @@ import { useRouter } from "next/router";
 import DatePicker from "../../components/Forms/DatePicker";
 import GuestsInput from "../../components/Forms/GuestsInput";
 import InputLayout from "../../components/Forms/InputLayout";
-
+import { GetServerSidePropsContext } from "next";
+import restrict from "../../utils/restrict";
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+    return await restrict(ctx);
+}
 export default function () {
     const mutation = api.invitation.create.useMutation();
     const router = useRouter();
@@ -32,36 +36,39 @@ export default function () {
     });
 
     return (
-        <FormProvider {...methods} >
-            <form onSubmit={methods.handleSubmit(submit)} >
-                <InputLayout value="Title">
-                    <TextInput
-                        id="title"
-                        placeholder="e.g My birthady party or prom"
-                        required={true}
-                        sizing="lg"
-                        {...methods.register('title')}
-                    />
-                </InputLayout>
+        <main className="p-7">
+            <FormProvider {...methods} >
+                <form onSubmit={methods.handleSubmit(submit)} >
+                    <InputLayout value="Title">
+                        <TextInput
+                            id="title"
+                            placeholder="e.g My birthady party or prom"
+                            required={true}
+                            sizing="lg"
+                            {...methods.register('title')}
+                        />
+                    </InputLayout>
 
-                <InputLayout value="Description">
-                    <Textarea
-                        id="comment"
-                        placeholder="e.g Hello Dear friend, I would lie to invite you..."
-                        required={true}
-                        rows={6}
-                        {...methods.register('description')}
-                    />
-                </InputLayout>
+                    <InputLayout value="Description">
+                        <Textarea
+                            id="comment"
+                            placeholder="e.g Hello Dear friend, I would lie to invite you..."
+                            required={true}
+                            rows={6}
+                            {...methods.register('description')}
+                        />
+                    </InputLayout>
 
-                <InputLayout value="Date">
-                    <DatePicker setDate={(v: Date) => methods.setValue("date", v)} />
-                </InputLayout>
+                    <InputLayout value="Date">
+                        <DatePicker setDate={(v: Date) => methods.setValue("date", v)} />
+                    </InputLayout>
 
-                <GuestsInput />
-                <Button className="bg-gradient-to-r from-purple-500 to-blue-500 max-[640px]:w-full" type="submit">Submit</Button>
-            </form>
-        </FormProvider>
+                    <GuestsInput />
+                    <Button className="bg-gradient-to-r from-green-400 to-blue-600 max-[640px]:w-full" type="submit">Submit</Button>
+                </form>
+            </FormProvider>
+        </main>
+
     );
 }
 

@@ -1,4 +1,4 @@
-import { GetStaticPropsContext } from "next";
+import { GetServerSidePropsContext } from "next";
 import { prisma } from "../../server/db";
 import { Label, Select, Table } from "flowbite-react";
 import Head from "next/head";
@@ -11,35 +11,25 @@ import QrDownload from "../../components/QrDownload";
 import { Invitation, Guest } from "@prisma/client";
 import { serialize } from "superjson";
 import { useState } from "react";
-import InputLayout from "../../components/Forms/InputLayout";
-export async function getStaticPaths() {
-    const invitations: { id: string }[] = await prisma.invitation.findMany({
-        where: {},
-        select: {
-            id: true
-        }
-    })
-    const paths = invitations.map((invitation: { id: string }) => ({
-        params: { id: invitation.id },
-    }))
+import restrict from "../../utils/restrict";
 
-    return { paths, fallback: false }
-}
-
-export async function getStaticProps({ params }: GetStaticPropsContext) {
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const invitation = await prisma.invitation.findUnique({
-        where: { id: params!.id as string },
+        where: { id: ctx.params!.id as string },
         include: { guests: true }
     })
-
-    return {
-        props: {
+    if (!invitation) return {
+        notFound: true
+    }
+    // auth before prisma query
+    return restrict(
+        ctx,
+        {
             invitation: serialize({
                 ...invitation, date: invitation?.date.toDateString()
             }).json
-        },
-        revalidate: 10
-    }
+        }
+    );
 }
 
 export default function ({ invitation }: { invitation: Invitation & { guests: Guest[] } & { date: string } }) {

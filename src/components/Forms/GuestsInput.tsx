@@ -15,7 +15,7 @@ export default function () {
     return <>
         <InputLayout value="Guests" />
         <div className="flex items-center justify-between">
-            <Button gradientDuoTone="purpleToBlue"
+            <Button gradientDuoTone="greenToBlue"
                 outline={true}
                 onClick={() => insert(0, { name: "" })}
             >Add guest<FaPlus className="ml-5" /></Button>

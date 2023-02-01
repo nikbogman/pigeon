@@ -1,21 +1,40 @@
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { type GetServerSidePropsContext } from "next";
-import { unstable_getServerSession } from "next-auth";
+import { NextAuthOptions } from "next-auth";
+import { getServerSession } from "next-auth/next";
+import { env } from "../env/server.mjs";
+import { prisma } from "./db";
+import GoogleProvider from "next-auth/providers/google";
 
-import { authOptions } from "../pages/api/auth/[...nextauth]";
+export const authOptions: NextAuthOptions = {
+  // Include user.id on session
+  callbacks: {
+    session({ session, user }) {
+      if (session.user) {
+        session.user.id = user.id;
+      }
+      return session;
+    },
+  },
+  // Configure one or more authentication providers
+  adapter: PrismaAdapter(prisma),
+  providers: [
+    GoogleProvider({
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
+    }),
+  ],
+  pages: {
+    signIn: '/auth/signIn'
+  },
+  theme: {
+    colorScheme: "light",
+  }
+};
 
-/**
- * Wrapper for unstable_getServerSession, used in trpc createContext and the
- * restricted API route
- *
- * Don't worry too much about the "unstable", it's safe to use but the syntax
- * may change in future versions
- *
- * @see https://next-auth.js.org/configuration/nextjs
- */
-
-export const getServerAuthSession = async (ctx: {
+export const getServerAuthSession = (ctx: {
   req: GetServerSidePropsContext["req"];
   res: GetServerSidePropsContext["res"];
 }) => {
-  return await unstable_getServerSession(ctx.req, ctx.res, authOptions);
+  return getServerSession(ctx.req, ctx.res, authOptions);
 };

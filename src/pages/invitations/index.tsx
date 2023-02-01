@@ -1,9 +1,15 @@
 import { Invitation } from "@prisma/client";
+import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import InvitationCard from "../../components/Cards/InvitationCard";
 import Layout from "../../components/Layout";
 import { api } from "../../utils/api";
+import restrict from "../../utils/restrict";
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+    return await restrict(ctx);
+}
 
 export default function () {
     const invitations = api.invitation.getMine.useQuery();
