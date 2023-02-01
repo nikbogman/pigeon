@@ -1,17 +1,18 @@
 import { z } from "zod";
-
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const invitationRouter = createTRPCRouter({
     create: protectedProcedure
-        .input(z.object({
-            title: z.string().min(2).max(20),
-            description: z.string().min(5),
-            date: z.date(),
-            guests: z.array(z.object({
-                name: z.string().min(2).max(20)
-            }))
-        })).mutation(async ({ input, ctx }) => {
+        .input(
+            z.object({
+                title: z.string().min(2).max(20),
+                description: z.string().min(5),
+                date: z.date(),
+                guests: z.array(z.object({
+                    name: z.string().min(2).max(20)
+                }))
+            })
+        ).mutation(async ({ input, ctx }) => {
             return ctx.prisma.invitation.create({
                 data: {
                     userId: ctx.session.user.id,
@@ -24,71 +25,41 @@ export const invitationRouter = createTRPCRouter({
                 }
             });
         }),
-
-    getMine: protectedProcedure.query(({ ctx }) => {
-        return ctx.prisma.invitation.findMany({
-            where: {
-                userId: ctx.session.user.id
-            },
-            include: {
-                _count: {
-                    select: {
-                        guests: true
-                    }
-                }
-            }
-        })
-    }),
-
-    getById: protectedProcedure
-        .input(z.string())
-        .query(({ input, ctx }) => {
-            return ctx.prisma.invitation.findUniqueOrThrow({
-                where: { id: input },
+    getAllWithGuestCount: protectedProcedure
+        .query(async ({ ctx }) => {
+            return ctx.prisma.invitation.findMany({
+                where: {
+                    userId: ctx.session.user.id
+                },
                 include: {
-                    guests: {
+                    _count: {
                         select: {
-                            name: true,
-                            attending: true
+                            guests: true
                         }
                     }
                 }
             })
         }),
-
-    deleteById: protectedProcedure
+    getByIdWithGuests: protectedProcedure
         .input(z.string())
-        .mutation(({ input, ctx }) => {
-            return ctx.prisma.invitation.deleteMany({
-                where: { id: input, userId: ctx.session.user.id }
-            })
-        }),
-    changeAttendance: publicProcedure
-        .input(z.object({
-            id: z.string(),
-            attending: z.boolean()
-        }))
-        .mutation(({ input, ctx }) => {
-            return ctx.prisma.guest.update({
-                where: { id: input.id },
-                data: { attending: input.attending }
-            })
-        }),
-
-    getAsGuest: publicProcedure
-        .input(z.object({
-            guestId: z.string(),
-            invitationId: z.string()
-        }))
-        .query(({ input, ctx }) => {
-            return ctx.prisma.guest.findFirstOrThrow({
+        .query(async ({ input, ctx }) => {
+            return ctx.prisma.invitation.findUniqueOrThrow({
                 where: {
-                    id: input.guestId,
-                    invitationId: input.invitationId
+                    id: input
                 },
                 include: {
-                    invitation: true
+                    guests: true
                 }
             })
-        })
+        }),
+    removeById: protectedProcedure
+        .input(z.string())
+        .mutation(async ({ input, ctx }) => {
+            return ctx.prisma.invitation.deleteMany({
+                where: {
+                    id: input,
+                    userId: ctx.session.user.id
+                }
+            })
+        }),
 });

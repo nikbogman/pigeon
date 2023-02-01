@@ -4,9 +4,12 @@ import { GetStaticPropsContext } from "next";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { serialize } from "superjson";
+import { createInnerTRPCContext } from "../../server/api/trpc";
 import { prisma } from "../../server/db";
 import { api } from "../../utils/api";
+import ssgHelpers from "../../utils/ssgHelpers";
 export async function getStaticPaths() {
+
     const guests: { id: string }[] = await prisma.guest.findMany({
         where: {},
         select: {
@@ -33,13 +36,13 @@ export async function getStaticProps({ params }: GetStaticPropsContext) {
         revalidate: 10
     }
 }
-
-export default function ({ guest }: {
+type IProps = {
     guest: Guest & {
         invitation: Invitation & { date: string };
     } & { updatedAt: string }
-}) {
-    const mutation = api.invitation.changeAttendance.useMutation();
+}
+export default function ({ guest }: IProps) {
+    const mutation = api.guest.updateAttendanceById.useMutation();
     const {
         register,
         handleSubmit,

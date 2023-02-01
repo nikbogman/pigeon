@@ -1,5 +1,4 @@
 import { GetServerSidePropsContext } from "next";
-import { prisma } from "../../server/db";
 import { Label, Select, Table } from "flowbite-react";
 import Head from "next/head";
 import { FaCheck, FaTimes } from "react-icons/fa";
@@ -11,28 +10,47 @@ import QrDownload from "../../components/QrDownload";
 import { Invitation, Guest } from "@prisma/client";
 import { serialize } from "superjson";
 import { useState } from "react";
-import restrict from "../../utils/restrict";
+import ssgHelpers from "../../utils/ssgHelpers";
+import { createInnerTRPCContext } from "../../server/api/trpc";
+import { getServerAuthSession } from "../../server/auth";
 
-export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-    const invitation = await prisma.invitation.findUnique({
-        where: { id: ctx.params!.id as string },
-        include: { guests: true }
-    })
-    if (!invitation) return {
-        notFound: true
+type IProps = {
+    invitation: Invitation & {
+        guests: Guest[]
+    } & {
+        date: string
     }
-    // auth before prisma query
-    return restrict(
-        ctx,
-        {
-            invitation: serialize({
-                ...invitation, date: invitation?.date.toDateString()
-            }).json
-        }
-    );
 }
 
-export default function ({ invitation }: { invitation: Invitation & { guests: Guest[] } & { date: string } }) {
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+    const session = await getServerAuthSession(ctx);
+    if (!session) {
+        return {
+            redirect: {
+                destination: '/auth/signIn',
+                permanent: false,
+            },
+        }
+    }
+    const trpcContext = await createInnerTRPCContext({ session });
+    const trpcHelper = ssgHelpers(trpcContext);
+
+    try {
+        const invitation = await trpcHelper.invitation.getByIdWithGuests.fetch(ctx.params!.id as string);
+        return {
+            props: {
+                invitation: serialize({ ...invitation, date: invitation?.date.toDateString() }).json
+            }
+        }
+
+    } catch (error) {
+        return {
+            notFound: true
+        }
+    }
+}
+
+export default function ({ invitation }: IProps) {
     const [filter, setFilter] = useState<string>('All');
 
     const data = (() => {

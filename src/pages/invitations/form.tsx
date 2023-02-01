@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { Button, TextInput, Label, Textarea } from "flowbite-react";
+import { Button, TextInput, Textarea } from "flowbite-react";
 import { FormProvider } from "react-hook-form";
 import { api } from "../../utils/api";
 import { useRouter } from "next/router";
@@ -7,9 +7,18 @@ import DatePicker from "../../components/Forms/DatePicker";
 import GuestsInput from "../../components/Forms/GuestsInput";
 import InputLayout from "../../components/Forms/InputLayout";
 import { GetServerSidePropsContext } from "next";
-import restrict from "../../utils/restrict";
+import { getServerAuthSession } from "../../server/auth";
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-    return await restrict(ctx);
+    const session = await getServerAuthSession(ctx);
+    if (!session) {
+        return {
+            redirect: {
+                destination: '/auth/signIn',
+                permanent: false,
+            },
+        }
+    }
+    return { props: {} }
 }
 export default function () {
     const mutation = api.invitation.create.useMutation();

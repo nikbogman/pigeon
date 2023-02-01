@@ -30,10 +30,12 @@ TODO:
         [x] get /:id
         [x] modal on delete for /:id
         [x] filter in guest table
+        [] enum for order
 
 -> /guests
     -> view
         [x] get invitation /:id 
             [x] better design
             [x] add thank you and sorry pages
-
+    -> general
+        [] work on /:id ssg

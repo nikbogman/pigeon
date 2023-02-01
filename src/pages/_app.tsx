@@ -12,7 +12,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (<>
     <Head>
-      <link rel="shortcut icon" href="/pigeon.ico" />
+      <link rel="shortcut icon" href="/favicon.ico" />
     </Head>
     <SessionProvider session={session}>
       <Component {...pageProps} />
