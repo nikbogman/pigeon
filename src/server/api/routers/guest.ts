@@ -1,7 +1,5 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "../trpc";
-import * as guestsService from "../../../lib/guests.service";
-import * as invitationsService from "../../../lib/invitations.service";
 
 export const guestRouter = createTRPCRouter({
     updateAttendanceById: publicProcedure
@@ -11,10 +9,15 @@ export const guestRouter = createTRPCRouter({
                 attending: z.boolean()
             })
         )
-        .mutation(async ({ input }) => {
-            return guestsService.updateById(input.id, {
-                attending: input.attending
-            });
+        .mutation(async ({ input, ctx }) => {
+            return ctx.prisma.guest.update({
+                where: {
+                    id: input.id
+                },
+                data: {
+                    attending: input.attending
+                }
+            })
         }),
     getByIdAndInvitation: publicProcedure
         .input(
@@ -23,9 +26,15 @@ export const guestRouter = createTRPCRouter({
                 invitationId: z.string()
             })
         )
-        .query(async ({ input }) => {
-            const guest = await guestsService.findById(input.guestId);
-            const invitation = await invitationsService.findById(input.invitationId);
-            return { ...guest, invitation }
+        .query(async ({ input, ctx }) => {
+            return ctx.prisma.guest.findFirstOrThrow({
+                where: {
+                    id: input.guestId,
+                    invitationId: input.invitationId
+                },
+                include: {
+                    invitation: true
+                }
+            })
         })
 });

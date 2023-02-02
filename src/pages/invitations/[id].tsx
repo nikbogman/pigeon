@@ -8,6 +8,7 @@ import RemoveModal from "../../components/Modals/RemoveModal";
 import QrModal from "../../components/QrModal";
 import QrDownload from "../../components/QrDownload";
 import { Invitation, Guest } from "@prisma/client";
+import { serialize } from "superjson";
 import { useState } from "react";
 import ssgHelpers from "../../utils/ssgHelpers";
 import { createInnerTRPCContext } from "../../server/api/trpc";
@@ -38,7 +39,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         const invitation = await trpcHelper.invitation.getByIdWithGuests.fetch(ctx.params!.id as string);
         return {
             props: {
-                invitation: { ...invitation, date: invitation?.date.toDateString() }
+                invitation: serialize({ ...invitation, date: invitation?.date.toDateString() }).json
             }
         }
 

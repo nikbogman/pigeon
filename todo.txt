@@ -1,21 +1,23 @@
 TODO:
 -> general
-    [] switch to mysql
-    [] percive images to cloundinary
     -> server
         [x] handle 404 in paths 
         [-] order by
             [x] add createdAt in prisma for most recent
-        [x] add trpc guest routes
+            [] add for most guests
+        [] handle qrcodes in ssg
+        [] add trpc guest routes
+        [] add more layers like services
 
     -> auth
         [x] map SignIn page in NextAuth
-        [x] dry getServerSideProps
+        [] dry getServerSideProps
 
     -> design
         [] add loading state for queries
         [x] add favicon
         [] work on index page
+        [] switch to daisy ui
         [x] make text large
         [x] qr code components
 
@@ -28,22 +30,12 @@ TODO:
         [x] get /:id
         [x] modal on delete for /:id
         [x] filter in guest table
-        [] enum for filter
+        [] enum for order
 
 -> /guests
     -> view
         [x] get invitation /:id 
             [x] better design
             [x] add thank you and sorry pages
-            [] add share link and qr buttons
     -> general
         [] work on /:id ssg
-
-- Vercel
-- Cloundinary
-- Railway
-- React Icons
-
--> firebase 
-    -> use admin package
-    -> use subcollections
