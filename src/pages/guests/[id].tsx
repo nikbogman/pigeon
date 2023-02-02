@@ -3,35 +3,29 @@ import { Button } from "flowbite-react";
 import { GetStaticPropsContext } from "next";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import { serialize } from "superjson";
-import { createInnerTRPCContext } from "../../server/api/trpc";
-import { prisma } from "../../server/db";
 import { api } from "../../utils/api";
-import ssgHelpers from "../../utils/ssgHelpers";
+import * as guestsService from "../../lib/guests.service";
+import * as invitationsService from "../../lib/invitations.service";
 export async function getStaticPaths() {
 
-    const guests: { id: string }[] = await prisma.guest.findMany({
-        where: {},
-        select: {
-            id: true
-        }
-    })
-    const paths = guests.map((guest: { id: string }) => ({
-        params: { id: guest.id },
-    }))
-
+    const guests = await guestsService.findMany();
+    const paths = guests.map(guest => ({ params: { id: guest.id } }))
     return { paths, fallback: false }
 }
 
 export async function getStaticProps({ params }: GetStaticPropsContext) {
-    const guest = await prisma.guest.findUnique({
-        where: { id: params!.id as string },
-        include: { invitation: true }
-    })
-    const invitation = { ...guest?.invitation, date: guest?.invitation.date.toDateString() }
+    const guest = await guestsService.findById(params!.id as string);
+    const invitation = await invitationsService.findById(guest.invitationId);
+
     return {
         props: {
-            guest: serialize({ ...guest, invitation }).json
+            guest: {
+                ...guest,
+                invitation: {
+                    ...invitation,
+                    date: invitation.date.toDate().toDateString()
+                }
+            }
         },
         revalidate: 10
     }
@@ -39,7 +33,7 @@ export async function getStaticProps({ params }: GetStaticPropsContext) {
 type IProps = {
     guest: Guest & {
         invitation: Invitation & { date: string };
-    } & { updatedAt: string }
+    }
 }
 export default function ({ guest }: IProps) {
     const mutation = api.guest.updateAttendanceById.useMutation();

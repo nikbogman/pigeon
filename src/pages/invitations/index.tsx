@@ -8,6 +8,7 @@ import { createInnerTRPCContext } from "../../server/api/trpc";
 import { getServerAuthSession } from "../../server/auth";
 import { api } from "../../utils/api";
 import ssgHelpers from "../../utils/ssgHelpers";
+import { Key } from "react";
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     const session = await getServerAuthSession(ctx);
@@ -38,13 +39,13 @@ export default function () {
             </Head>
             <Layout>
                 <main className="mt-20 mb-16 px-2">
-                    {data?.length ? data.map((el, i) => (
+                    {data?.length ? data.map((el: { id: any; title: string; description: string; date: Date; guestCount: number; }, i: Key | null | undefined) => (
                         <Link href={`/invitations/${el.id}`} key={i}>
                             <InvitationCard
                                 title={el.title}
                                 description={el.description}
                                 date={el.date}
-                                guestCount={el._count.guests}
+                                guestCount={el.guestCount}
                             />
                         </Link>
                     )) : <h1 className="text-center text-gray-500 font-medium p-10">You have no invitations created. Press the button to do so.</h1>}
