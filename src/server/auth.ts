@@ -1,6 +1,6 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { type GetServerSidePropsContext } from "next";
-import { NextAuthOptions } from "next-auth";
+import type { GetServerSidePropsContext } from "next";
+import type { NextAuthOptions } from "next-auth";
 import { getServerSession } from "next-auth/next";
 import { env } from "../env/server.mjs";
 import { prisma } from "./db";
@@ -27,9 +27,6 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: '/auth/signIn'
   },
-  theme: {
-    colorScheme: "light",
-  }
 };
 
 export const getServerAuthSession = (ctx: {

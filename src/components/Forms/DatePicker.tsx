@@ -17,17 +17,17 @@ const options = {
         disabledText: "bg-gray-100",
         input: "text-[calc(10px + 2vmin)]",
         inputIcon: "",
-        selected: "bg-gradient-to-r from-purple-500 to-blue-500 text-white",
+        selected: "bg-gradient-to-r from-cyan-500 to-blue-500 text-white",
     },
     datepickerClassNames: "top-12",
     defaultDate: undefined,
     language: "en",
 } as const;
 
-interface IProps {
+type TProps = {
     setDate: (v: Date) => void;
 }
-export default function ({ setDate }: IProps) {
+export default function DatePicker({ setDate }: TProps) {
     const [show, setShow] = useState<boolean>(false);
 
     return <Datepicker

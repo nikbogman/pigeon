@@ -1,11 +1,11 @@
-import { Label } from "flowbite-react"
+import { Label } from "flowbite-react";
 
-interface IProps {
+type TProps = {
     children?: string | JSX.Element | JSX.Element[];
     value: string;
 }
 
-export default function (props: IProps) {
+export default function InputLayout(props: TProps) {
     return <div className='mt-2'>
         <div className="mb-2 block">
             <Label htmlFor="g" value={props.value} className="text-lg" />

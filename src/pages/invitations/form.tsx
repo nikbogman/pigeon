@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import DatePicker from "../../components/Forms/DatePicker";
 import GuestsInput from "../../components/Forms/GuestsInput";
 import InputLayout from "../../components/Forms/InputLayout";
-import { GetServerSidePropsContext } from "next";
+import type { GetServerSidePropsContext } from "next";
 import { getServerAuthSession } from "../../server/auth";
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     const session = await getServerAuthSession(ctx);
@@ -20,9 +20,10 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     }
     return { props: {} }
 }
-export default function () {
+export default function InvitationForm() {
     const mutation = api.invitation.create.useMutation();
     const router = useRouter();
+
     const submit = async (data: {
         title: string;
         date: Date;
@@ -31,8 +32,8 @@ export default function () {
             name: string;
         }[];
     }) => {
-        await mutation.mutateAsync(data);
-        router.push('/')
+        mutation.mutate(data);
+        await router.push('/')
     }
 
     const methods = useForm({
@@ -73,7 +74,7 @@ export default function () {
                     </InputLayout>
 
                     <GuestsInput />
-                    <Button className="bg-gradient-to-r from-green-400 to-blue-600 max-[640px]:w-full" type="submit">Submit</Button>
+                    <Button className="bg-gradient-to-r from-cyan-500 to-blue-500 max-[640px]:w-full" type="submit">Submit</Button>
                 </form>
             </FormProvider>
         </main>

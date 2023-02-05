@@ -1,9 +1,9 @@
 import { useFormContext } from "react-hook-form";
-import { Button, TextInput, Label } from "flowbite-react";
+import { Button, TextInput } from "flowbite-react";
 import { FaTrash, FaPlus } from "react-icons/fa";
 import { useFieldArray } from "react-hook-form";
 import InputLayout from "./InputLayout";
-export default function () {
+export default function GuestsInput() {
     const methods = useFormContext();
     const { fields, insert, remove, replace } = useFieldArray({
         control: methods.control,
@@ -15,7 +15,7 @@ export default function () {
     return <>
         <InputLayout value="Guests" />
         <div className="flex items-center justify-between">
-            <Button gradientDuoTone="greenToBlue"
+            <Button gradientDuoTone="cyanToBlue"
                 outline={true}
                 onClick={() => insert(0, { name: "" })}
             >Add guest<FaPlus className="ml-5" /></Button>

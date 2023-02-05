@@ -1,20 +1,23 @@
-import { Table } from "flowbite-react";
+import { Button } from "flowbite-react";
 import { FaDownload } from "react-icons/fa";
-import QRCode from 'qrcode';
 
-export default function () {
+type IProps = {
+    dataUrl: string;
+    name: string;
+}
+export default function QrDownload(props: IProps) {
 
-    const handleClick = async () => {
-        const buff = await QRCode.toString('https://reactjs.org/');
-        const file = new Blob([buff], { type: "image/svg+xml" });
+    const handleClick = () => {
         const element = document.createElement("a");
-        element.href = URL.createObjectURL(file);
-        element.download = "pigeonQr-" + Date.now() + ".svg";
+        element.href = props.dataUrl;
+        element.download = `pigeonQr-${props.name}.png`;
         document.body.appendChild(element);
         element.click();
     }
 
-    return <Table.Cell onClick={handleClick}>
+    return <Button
+        color="light"
+        onClick={handleClick}>
         <FaDownload />
-    </Table.Cell>
+    </Button>
 }   

@@ -2,30 +2,33 @@ import { Button } from "flowbite-react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FaArrowLeft, FaPlus, FaUser } from "react-icons/fa";
+import { FaArrowLeft, FaPlus, FaUser, FaSignOutAlt } from "react-icons/fa";
 
-interface IProps {
+type TProps = {
     children: React.ReactNode
 }
-export default function ({ children }: IProps) {
+export default function Layout({ children }: TProps) {
     const { data: sessionData } = useSession();
     const { pathname } = useRouter();
     const username = sessionData && <span>{sessionData.user?.name?.split(" ")[0]}</span>
 
+    const isInvitationsPage = pathname === '/invitations';
+    const iconStyle = "h-5 aspect-square";
+    const icon = isInvitationsPage ? <FaPlus className={iconStyle} /> : <FaArrowLeft className={iconStyle} />
     return <>
         <div className="fixed z-10 inset-x-0 top-0 w-full">
-            <div className="flex justify-between border bg-gradient-to-br from-green-400 to-blue-600 text-white rounded-lg shadow-md p-2 mx-5 mt-2 items-center">
+            <div className="flex justify-between border bg-gradient-to-br from-cyan-500 to-blue-500 text-white rounded-lg shadow-md p-2 mx-5 mt-2 items-center">
                 <p className="flex items-center font-medium"><FaUser className="ml-2 mr-2" />{username}</p>
                 <Button color="light"
                     onClick={() => signOut()}
-                >Sign Out</Button>
+                ><FaSignOutAlt className="mr-2" />Sign Out</Button>
             </div>
         </div>
         {children}
-        <Link href={pathname === '/invitations' ? '/invitations/form' : '/invitations'}>
+        <Link href={isInvitationsPage ? '/invitations/form' : '/invitations'}>
             <Button className="fixed z-50 inset-x-0 bottom-2 mx-5"
-                gradientDuoTone="greenToBlue"
-            >{pathname === '/invitations' ? <FaPlus className="w-5 h-5" /> : <FaArrowLeft className="w-5 h-5" />}</Button>
+                gradientDuoTone="cyanToBlue"
+            >{icon}</Button>
         </Link>
     </>
 }

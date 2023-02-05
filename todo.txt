@@ -4,20 +4,17 @@ TODO:
         [x] handle 404 in paths 
         [-] order by
             [x] add createdAt in prisma for most recent
-            [] add for most guests
-        [] handle qrcodes in ssg
-        [] add trpc guest routes
-        [] add more layers like services
+        [x] handle qrcodes in ssg
+        [x] add trpc guest routes
 
     -> auth
         [x] map SignIn page in NextAuth
-        [] dry getServerSideProps
+        [x] dry getServerSideProps
 
     -> design
         [] add loading state for queries
         [x] add favicon
         [] work on index page
-        [] switch to daisy ui
         [x] make text large
         [x] qr code components
 
@@ -30,7 +27,6 @@ TODO:
         [x] get /:id
         [x] modal on delete for /:id
         [x] filter in guest table
-        [] enum for order
 
 -> /guests
     -> view
@@ -38,4 +34,8 @@ TODO:
             [x] better design
             [x] add thank you and sorry pages
     -> general
-        [] work on /:id ssg
+        [x] remove /:id ssg
+
+
+docker build -t ct3a-docker --build-arg NEXT_PUBLIC_CLIENTVAR=clientvar NODE_ENV=production . 
+docker run -p 3000:3000 -e DATABASE_URL="mysql://root:FKXDIUH7Q29kS4UN9han@containers-us-west-57.railway.app:7410/railway" ct3a-docker

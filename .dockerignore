@@ -1,0 +1,10 @@
+# See https://create.t3.gg/en/deployment/docker#2-create-dockerignore-file from more information
+.env
+Dockerfile
+.dockerignore
+node_modules
+npm - debug.log
+README.md
+.next
+.git
+todo.txt

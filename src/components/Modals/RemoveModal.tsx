@@ -5,10 +5,10 @@ import { FaTrash } from "react-icons/fa";
 import { FaExclamationCircle } from 'react-icons/fa';
 import { api } from "../../utils/api";
 
-export default function () {
+export default function RemoveModal() {
     const router = useRouter();
     const [trigger, setTrigger] = useState<boolean>(false)
-    const mutation = api.invitation.deleteById.useMutation();
+    const mutation = api.invitation.removeById.useMutation();
 
     return <>
         <button
@@ -20,7 +20,7 @@ export default function () {
             show={trigger}
             size="xl"
             popup={true}
-            style={{ height: '100vh' }}
+            style={{ height: "100vh" }}
             onClose={() => setTrigger(false)}
         >
             <Modal.Header></Modal.Header>
@@ -32,13 +32,13 @@ export default function () {
                     </h3>
                     <div className="flex justify-center gap-4">
                         <Button
-                            style={{ background: '#F05252' }}
-                            onClick={() => {
+                            style={{ background: "#F05252" }}
+                            onClick={async () => {
                                 setTrigger(false);
-                                mutation.mutate(router.query.id! as string);
-                                router.push('/');
+                                mutation.mutate(router.query.id as string);
+                                await router.push("/");
                             }}
-                        >Yes, I'm sure</Button>
+                        >Yes, I am sure</Button>
                         <Button
                             color="gray"
                             onClick={() => { setTrigger(false) }}

@@ -1,57 +1,48 @@
-import { Guest, Invitation } from "@prisma/client";
+import type { Guest, Invitation } from "@prisma/client";
 import { Button } from "flowbite-react";
-import { GetStaticPropsContext } from "next";
+import type { GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { serialize } from "superjson";
 import { createInnerTRPCContext } from "../../server/api/trpc";
-import { prisma } from "../../server/db";
 import { api } from "../../utils/api";
 import ssgHelpers from "../../utils/ssgHelpers";
-export async function getStaticPaths() {
 
-    const guests: { id: string }[] = await prisma.guest.findMany({
-        where: {},
-        select: {
-            id: true
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+    const trpcContext = createInnerTRPCContext({ session: null });
+    const trpcHelper = ssgHelpers(trpcContext);
+    try {
+        const guest = await trpcHelper.guest.getByIdAndInvitation.fetch(ctx.params!.id as string);
+        return {
+            props: {
+                ...guest,
+                invitation: serialize({ ...guest.invitation, date: guest.invitation.date.toDateString() }).json,
+            }
         }
-    })
-    const paths = guests.map((guest: { id: string }) => ({
-        params: { id: guest.id },
-    }))
 
-    return { paths, fallback: false }
-}
-
-export async function getStaticProps({ params }: GetStaticPropsContext) {
-    const guest = await prisma.guest.findUnique({
-        where: { id: params!.id as string },
-        include: { invitation: true }
-    })
-    const invitation = { ...guest?.invitation, date: guest?.invitation.date.toDateString() }
-    return {
-        props: {
-            guest: serialize({ ...guest, invitation }).json
-        },
-        revalidate: 10
+    } catch (error) {
+        return {
+            notFound: true
+        }
     }
 }
+
 type IProps = {
     guest: Guest & {
         invitation: Invitation & { date: string };
-    } & { updatedAt: string }
+    }
 }
-export default function ({ guest }: IProps) {
+export default function GuestPage({ guest }: IProps) {
     const mutation = api.guest.updateAttendanceById.useMutation();
     const {
         register,
         handleSubmit,
     } = useForm();
     const router = useRouter();
-    const submitEvent = handleSubmit(data => {
+    const submitEvent = handleSubmit(async data => {
         const answer = data.answer === 'yes' ? true : false;
         mutation.mutate({ id: guest.id, attending: answer });
-        router.push('/guests/answers/' + data.answer);
+        await router.push(`/guests/answers/${data.answer as string}`);
     })
 
     return <>

@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 @layer base {
+    * {
+        @apply text-[calc(10px+2vmin)];
+    }
+
     h1 {
         @apply text-2xl;
         @apply font-semibold;

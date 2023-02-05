@@ -1,25 +1,26 @@
-import { GetServerSidePropsContext } from "next";
-import { Label, Select, Table } from "flowbite-react";
+import type { GetServerSidePropsContext } from "next";
+import { Label, Select } from "flowbite-react";
 import Head from "next/head";
-import { FaCheck, FaTimes } from "react-icons/fa";
 import Layout from "../../components/Layout";
 import { Card } from "flowbite-react";
 import RemoveModal from "../../components/Modals/RemoveModal";
-import QrModal from "../../components/QrModal";
-import QrDownload from "../../components/QrDownload";
-import { Invitation, Guest } from "@prisma/client";
+import type { Invitation, Guest } from "@prisma/client";
 import { serialize } from "superjson";
 import { useState } from "react";
 import ssgHelpers from "../../utils/ssgHelpers";
 import { createInnerTRPCContext } from "../../server/api/trpc";
 import { getServerAuthSession } from "../../server/auth";
+import generateQrCode from "../../lib/generateQrCode";
+import GuestCard from "../../components/Cards/GuestCard";
+import { MdCalendarToday, MdGroup } from "react-icons/md";
 
 type IProps = {
     invitation: Invitation & {
         guests: Guest[]
     } & {
         date: string
-    }
+    },
+    dataUrl: string;
 }
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
@@ -32,14 +33,16 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
             },
         }
     }
-    const trpcContext = await createInnerTRPCContext({ session });
+    const trpcContext = createInnerTRPCContext({ session });
     const trpcHelper = ssgHelpers(trpcContext);
 
     try {
         const invitation = await trpcHelper.invitation.getByIdWithGuests.fetch(ctx.params!.id as string);
+        const dataUrl = await generateQrCode();
         return {
             props: {
-                invitation: serialize({ ...invitation, date: invitation?.date.toDateString() }).json
+                invitation: serialize({ ...invitation, date: invitation?.date.toDateString() }).json,
+                dataUrl
             }
         }
 
@@ -50,7 +53,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     }
 }
 
-export default function ({ invitation }: IProps) {
+export default function InvitationPage({ invitation, dataUrl }: IProps) {
     const [filter, setFilter] = useState<string>('All');
 
     const data = (() => {
@@ -76,56 +79,36 @@ export default function ({ invitation }: IProps) {
                         <h5 className="text-2xl font-bold  truncate">{invitation.title}</h5>
                         <RemoveModal />
                     </div>
-                    <div className="flex w-full items-center text-gray-700 tracking-tight text-xs justify-between">
-                        <p>On:  <b>{invitation.date}</b></p>
-                    </div>
+                    <p className="flex w-full items-center text-gray-700 tracking-tight text-xs">
+                        <MdCalendarToday className="w-4 aspect-square mr-2" />
+                        <b>{invitation.date}</b>
+                    </p>
                     <p className="text-sm">{invitation.description}</p>
                 </Card>
-                <div className='mt-5 w-full flex items-center justify-around'>
-                    <div className="mb-2 block">
-                        <Label htmlFor="g" value="Filter" className="text-lg" />
+                <div className="mt-5 w-full flex items-center justify-around">
+                    <div className="flex items-center">
+                        <div className="mr-2 items-center">
+                            <Label htmlFor="g" value="Filter" className="text-lg" />
+                        </div>
+                        <Select
+                            id="show"
+                            className="w-fit"
+                            onChange={(e) => setFilter(e.target.value)}
+                        >
+                            <option>All</option>
+                            <option>Attending</option>
+                            <option>Not Attending</option>
+                        </Select>
                     </div>
-                    <Select
-                        id="show"
-                        className="w-fit"
-                        onChange={(e) => setFilter(e.target.value)}
-                    >
-                        <option>All</option>
-                        <option>Attending</option>
-                        <option>Not Attending</option>
-                    </Select>
+                    <p className="flex items-center">
+                        <MdGroup className="w-4 aspect-square mr-2" />
+                        <Label value={data.length.toString()} />
+                    </p>
                 </div>
 
-                <Table className="w-full mt-2">
-                    <Table.Head>
-                        <Table.HeadCell>
-                            Name
-                        </Table.HeadCell>
-                        <Table.HeadCell>
-                            Attending
-                        </Table.HeadCell>
-                        <Table.HeadCell>
-                        </Table.HeadCell>
-                        <Table.HeadCell>
-                        </Table.HeadCell>
-                    </Table.Head>
-                    <Table.Body className="divide-y">
-                        {data.map((g, i) => (
-                            <Table.Row key={i}>
-                                <Table.Cell className="whitespace-nowrap font-medium text-gray-900">
-                                    {g.name}
-                                </Table.Cell>
-                                <Table.Cell className="flex justify-center">
-                                    {g.attending ? <FaCheck style={{ color: '#22c55e' }} /> : <FaTimes style={{ color: '#ef4444' }} />}
-                                </Table.Cell>
-                                {/*  */}
-                                <QrModal url={g.name} name={g.name} />
-                                <QrDownload />
-                            </Table.Row>
-                        ))}
-
-                    </Table.Body >
-                </Table>
+                <div className="mt-5">
+                    {data.map((g, i) => <GuestCard guest={g} dataUrl={dataUrl} key={i} />)}
+                </div>
             </main>
         </Layout>
     </>

@@ -1,9 +1,8 @@
 import Head from "next/head";
 import Link from "next/link";
-import { GetServerSidePropsContext } from "next";
+import type { GetServerSidePropsContext } from "next";
 import Layout from "../../components/Layout";
 import InvitationCard from "../../components/Cards/InvitationCard";
-
 import { createInnerTRPCContext } from "../../server/api/trpc";
 import { getServerAuthSession } from "../../server/auth";
 import { api } from "../../utils/api";
@@ -19,7 +18,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
             },
         }
     }
-    const trpcContext = await createInnerTRPCContext({ session });
+    const trpcContext = createInnerTRPCContext({ session });
     const trpcHelper = ssgHelpers(trpcContext);
     await trpcHelper.invitation.getAllWithGuestCount.prefetch();
     return {
@@ -29,7 +28,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     }
 }
 
-export default function () {
+export default function InvitationsPage() {
     const { data } = api.invitation.getAllWithGuestCount.useQuery();
     return (
         <>

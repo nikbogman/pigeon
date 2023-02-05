@@ -20,17 +20,11 @@ export const guestRouter = createTRPCRouter({
             })
         }),
     getByIdAndInvitation: publicProcedure
-        .input(
-            z.object({
-                guestId: z.string(),
-                invitationId: z.string()
-            })
-        )
+        .input(z.string())
         .query(async ({ input, ctx }) => {
             return ctx.prisma.guest.findFirstOrThrow({
                 where: {
-                    id: input.guestId,
-                    invitationId: input.invitationId
+                    id: input,
                 },
                 include: {
                     invitation: true
