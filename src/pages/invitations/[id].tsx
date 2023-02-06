@@ -76,7 +76,7 @@ export default function InvitationPage({ invitation, dataUrl }: IProps) {
             <main className="mt-20 mb-16">
                 <Card className="mx-2">
                     <div className="flex w-full items-center justify-between">
-                        <h5 className="text-2xl font-bold  truncate">{invitation.title}</h5>
+                        <h5 className="text-2xl font-bold truncate mr-5">{invitation.title}</h5>
                         <RemoveModal />
                     </div>
                     <p className="flex w-full items-center text-gray-700 tracking-tight text-xs">

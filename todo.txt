@@ -12,6 +12,9 @@ TODO:
         [x] dry getServerSideProps
 
     -> design
+        f[] better error handling
+        f[] better folder structure
+        ?[] replace flowbite react with plain flowbite maybe
         [] add loading state for queries
         [x] add favicon
         [] work on index page
@@ -23,6 +26,7 @@ TODO:
         [x] create
         [x] get /:id
     -> view
+        [] rename form.tsx
         [x] create
         [x] get /:id
         [x] modal on delete for /:id
@@ -30,6 +34,7 @@ TODO:
 
 -> /guests
     -> view
+        [] pass query to answer page instead of having two pages
         [x] get invitation /:id 
             [x] better design
             [x] add thank you and sorry pages
@@ -37,5 +42,7 @@ TODO:
         [x] remove /:id ssg
 
 
-docker build -t ct3a-docker --build-arg NEXT_PUBLIC_CLIENTVAR=clientvar NODE_ENV=production . 
+:: run command -->--> docker build -t ct3a-docker --build-arg NEXT_PUBLIC_CLIENTVAR=clientvar NODE_ENV=production . 
 docker run -p 3000:3000 -e DATABASE_URL="mysql://root:FKXDIUH7Q29kS4UN9han@containers-us-west-57.railway.app:7410/railway" ct3a-docker
+
+-> better error handling

@@ -28,7 +28,7 @@ export default function QrModal({ dataUrl, name }: TProps) {
         >
             <Modal.Header />
             <Modal.Body className="flex flex-col items-center pt-10">
-                <Image alt="qr" src={dataUrl} className="w-full" />
+                <Image alt="qr" src={dataUrl} className="w-full" width={200} height={200} />
                 <h1 className="font-bold text-xl mt-5">{name}</h1>
                 <Button color="gray" className="w-full mt-5 mb-2" onClick={() => copy(dataUrl)}>
                     <MdOutlineQrCode2 className="mr-5" />Copy QR</Button>

@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { Button, TextInput, Textarea } from "flowbite-react";
+import { Button, TextInput, Textarea, Alert } from "flowbite-react";
 import { FormProvider } from "react-hook-form";
 import { api } from "../../utils/api";
 import { useRouter } from "next/router";
@@ -8,6 +8,8 @@ import GuestsInput from "../../components/Forms/GuestsInput";
 import InputLayout from "../../components/Forms/InputLayout";
 import type { GetServerSidePropsContext } from "next";
 import { getServerAuthSession } from "../../server/auth";
+import { HiInformationCircle } from 'react-icons/hi'
+import ErrorAlert from "../../components/ErrorAlert";
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     const session = await getServerAuthSession(ctx);
     if (!session) {
@@ -28,9 +30,7 @@ export default function InvitationForm() {
         title: string;
         date: Date;
         description: string;
-        guests: {
-            name: string;
-        }[];
+        guests: { name: string }[];
     }) => {
         mutation.mutate(data);
         await router.push('/')
@@ -41,13 +41,17 @@ export default function InvitationForm() {
             title: "",
             date: new Date(),
             description: "",
-            guests: [{ name: '' }]
+            guests: [{ name: "" }]
         }
     });
 
     return (
         <main className="p-7">
-            <FormProvider {...methods} >
+            {methods.formState.errors.title || methods.formState.errors.description ? <ErrorAlert
+                bolded="Info alert"
+                normal="Only characters are allowed in the text fields."
+            /> : null}
+            <FormProvider {...methods}>
                 <form onSubmit={methods.handleSubmit(submit)} >
                     <InputLayout value="Title">
                         <TextInput
@@ -55,7 +59,9 @@ export default function InvitationForm() {
                             placeholder="e.g My birthady party or prom"
                             required={true}
                             sizing="lg"
-                            {...methods.register('title')}
+                            {...methods.register('title', {
+                                pattern: /^[a-z\u0400-\u04FF ,.'-]+$/
+                            })}
                         />
                     </InputLayout>
 
@@ -65,7 +71,9 @@ export default function InvitationForm() {
                             placeholder="e.g Hello Dear friend, I would lie to invite you..."
                             required={true}
                             rows={6}
-                            {...methods.register('description')}
+                            {...methods.register('description', {
+                                pattern: /^[a-z\u0400-\u04FF ,.'-]+$/
+                            })}
                         />
                     </InputLayout>
 
