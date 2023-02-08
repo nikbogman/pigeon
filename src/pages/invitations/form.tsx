@@ -1,15 +1,13 @@
 import { useForm } from "react-hook-form";
-import { Button, TextInput, Textarea, Alert } from "flowbite-react";
+import { Button, TextInput, Textarea, Label } from "flowbite-react";
 import { FormProvider } from "react-hook-form";
 import { api } from "../../utils/api";
 import { useRouter } from "next/router";
 import DatePicker from "../../components/Forms/DatePicker";
 import GuestsInput from "../../components/Forms/GuestsInput";
-import InputLayout from "../../components/Forms/InputLayout";
 import type { GetServerSidePropsContext } from "next";
 import { getServerAuthSession } from "../../server/auth";
-import { HiInformationCircle } from 'react-icons/hi'
-import ErrorAlert from "../../components/ErrorAlert";
+import ErrorCard from "../../components/Cards/ErrorCard";
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     const session = await getServerAuthSession(ctx);
     if (!session) {
@@ -21,6 +19,13 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
         }
     }
     return { props: {} }
+}
+
+const textFieldValidator = {
+    pattern: {
+        value: /^[a-zA-Z ]*$/,
+        message: "Only characters are allowed in the text fields."
+    }
 }
 export default function InvitationForm() {
     const mutation = api.invitation.create.useMutation();
@@ -46,46 +51,50 @@ export default function InvitationForm() {
     });
 
     return (
-        <main className="p-7">
-            {methods.formState.errors.title || methods.formState.errors.description ? <ErrorAlert
-                bolded="Info alert"
-                normal="Only characters are allowed in the text fields."
-            /> : null}
+        <main className="m-2">
+            <h1 className="p-10 font-extrabold text-center text-gray-500 text-2xl">
+                Create an invitation for event
+            </h1>
             <FormProvider {...methods}>
-                <form onSubmit={methods.handleSubmit(submit)} >
-                    <InputLayout value="Title">
-                        <TextInput
-                            id="title"
-                            placeholder="e.g My birthady party or prom"
-                            required={true}
-                            sizing="lg"
-                            {...methods.register('title', {
-                                pattern: /^[a-z\u0400-\u04FF ,.'-]+$/
-                            })}
-                        />
-                    </InputLayout>
+                <form onSubmit={methods.handleSubmit(submit)} className="p-4 border-t-2 rounded-lg shadow-lg">
+                    <div className="text-lg mb-2">
+                        <Label htmlFor="title" value="Title" />
+                    </div>
+                    <TextInput
+                        id="title"
+                        placeholder="e.g My birthady party or prom"
+                        required={true}
+                        sizing="lg"
+                        {...methods.register('title', textFieldValidator)}
+                    />
+                    {methods.formState.errors.title && <ErrorCard className="mt-2">
+                        <span>{methods.formState.errors.title.message}</span>
+                    </ErrorCard>}
 
-                    <InputLayout value="Description">
-                        <Textarea
-                            id="comment"
-                            placeholder="e.g Hello Dear friend, I would lie to invite you..."
-                            required={true}
-                            rows={6}
-                            {...methods.register('description', {
-                                pattern: /^[a-z\u0400-\u04FF ,.'-]+$/
-                            })}
-                        />
-                    </InputLayout>
+                    <div className="text-lg mt-4 mb-2">
+                        <Label htmlFor="description" value="Description" className="text-lg" />
+                    </div>
+                    <Textarea
+                        id="description"
+                        placeholder="e.g Hello Dear friend, I would lie to invite you..."
+                        required={true}
+                        rows={6}
+                        {...methods.register('description', textFieldValidator)}
+                    />
+                    {methods.formState.errors.description && <ErrorCard className="mt-2">
+                        <span>{methods.formState.errors.description.message}</span>
+                    </ErrorCard>}
 
-                    <InputLayout value="Date">
-                        <DatePicker setDate={(v: Date) => methods.setValue("date", v)} />
-                    </InputLayout>
+                    <div className="text-lg mt-4 mb-2">
+                        <Label value="Date" className="text-lg" />
+                    </div>
+                    <DatePicker setDate={(v: Date) => methods.setValue("date", v)} />
 
                     <GuestsInput />
-                    <Button className="bg-gradient-to-r from-cyan-500 to-blue-500 max-[640px]:w-full" type="submit">Submit</Button>
+                    <Button className="max-[640px]:w-full bg-gradient-to-r from-cyan-500 to-blue-500" type="submit">Submit</Button>
                 </form>
             </FormProvider>
-        </main>
+        </main >
 
     );
 }

@@ -1,9 +1,10 @@
 import { useFormContext } from "react-hook-form";
-import { Button, TextInput } from "flowbite-react";
+import { Button, Label, TextInput } from "flowbite-react";
 import { FaTrash, FaPlus } from "react-icons/fa";
 import { useFieldArray } from "react-hook-form";
-import InputLayout from "./InputLayout";
-import ErrorAlert from "../ErrorAlert";
+import TrashButton from "../Buttons/TrashButton";
+import ErrorCard from "../Cards/ErrorCard";
+import { MdGroup } from "react-icons/md";
 export default function GuestsInput() {
     const methods = useFormContext();
     const { fields, insert, remove, replace } = useFieldArray({
@@ -14,13 +15,18 @@ export default function GuestsInput() {
         }
     });
     return <>
-        <InputLayout value="Guests" />
+        <div className="text-lg mt-4 mb-2 flex justify-between items-center">
+            <Label value="Guests" />
+            <p className="flex items-center">
+                <MdGroup className="w-4 aspect-square mr-2" />
+                <b>{fields.length}</b>
+            </p>
+        </div>
         <div className="flex items-center justify-between">
             <Button gradientDuoTone="cyanToBlue"
                 outline={true}
                 onClick={() => insert(0, "")}
             >Add guest<FaPlus className="ml-5" /></Button>
-            <h2>{fields.length}</h2>
             <Button
                 style={{ background: '#9CA3AF' }}
                 outline={true}
@@ -28,22 +34,18 @@ export default function GuestsInput() {
             >Clear all<FaTrash className="ml-5" /></Button>
         </div>
         {fields.map((field, index) => {
-            const errors = methods.formState.errors.guests;
-            let error = null;
-            // @ts-ignore
-            if (errors && errors[index]) {
-                // @ts-ignore
-                error = <ErrorAlert normal={errors[index].name.message} />
-            }
+            const errors = methods.formState.errors.guests as any;
             return <div className="my-2" key={field.id}>
-                <div className={`${fields.length === 1 ? `block` : `flex`} h-fit items-center max-[640px]:w-full`}>
+                <div className={`${fields.length === 1 ? `block` : `flex items-center`} h-fit max-[640px]:w-full`}>
                     <TextInput
                         id="guest-input"
-                        placeholder="e.g John Doe" required={true} sizing="lg"
+                        placeholder="e.g John Doe"
+                        required={true}
+                        sizing="lg"
                         className="max-[640px]:w-full"
                         {...methods.register(`guests.${index}.name` as const, {
                             pattern: {
-                                value: /^[a-z\u0400-\u04FF ,.'-]+$/,
+                                value: /^[a-z ,.'-]+$/i,
                                 message: "Please provide only valid names!"
                             },
                             validate: (value, formValues) => {
@@ -53,13 +55,11 @@ export default function GuestsInput() {
                             }
                         })}
                     />
-                    {fields.length > 1 ? <button
-                        onClick={() => remove(index)}
-                        className="bg-red-500 flex text-white font-bold p-0.5 ml-2 aspect-square rounded-lg h-min border border-transparent">
-                        <FaTrash className="h-5 w-5 m-4" />
-                    </button> : null}
+                    {fields.length > 1 ? <TrashButton onClick={() => remove(index)} /> : null}
                 </div>
-                {error}
+                {errors && errors[index] ? <ErrorCard className="mt-2">
+                    <span>{errors[index].name.message}</span>
+                </ErrorCard> : null}
             </div>
         })}
     </>

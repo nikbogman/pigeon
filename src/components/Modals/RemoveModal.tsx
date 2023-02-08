@@ -3,25 +3,23 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { FaExclamationCircle } from 'react-icons/fa';
+import useToggle from "../../hooks/useToggle";
 import { api } from "../../utils/api";
+import TrashButton from "../Buttons/TrashButton";
 
 export default function RemoveModal() {
     const router = useRouter();
-    const [trigger, setTrigger] = useState<boolean>(false)
+    const [isToggled, toggle] = useToggle();
     const mutation = api.invitation.removeById.useMutation();
 
     return <>
-        <button
-            onClick={() => setTrigger(true)}
-            className="bg-red-500 flex text-white font-bold p-2.5 aspect-square rounded-lg h-min border border-transparent"
-        ><FaTrash className="h-4 w-4" /></button>
-
+        <TrashButton onClick={toggle} />
         <Modal
-            show={trigger}
+            show={isToggled}
             size="xl"
             popup={true}
             style={{ height: "100vh" }}
-            onClose={() => setTrigger(false)}
+            onClose={toggle}
         >
             <Modal.Header></Modal.Header>
             <Modal.Body>
@@ -34,14 +32,14 @@ export default function RemoveModal() {
                         <Button
                             style={{ background: "#F05252" }}
                             onClick={async () => {
-                                setTrigger(false);
+                                toggle();
                                 mutation.mutate(router.query.id as string);
                                 await router.push("/");
                             }}
                         >Yes, I am sure</Button>
                         <Button
                             color="gray"
-                            onClick={() => { setTrigger(false) }}
+                            onClick={toggle}
                         >No, cancel</Button>
                     </div>
                 </div>

@@ -1,12 +1,14 @@
 import Head from "next/head";
 import Link from "next/link";
 import type { GetServerSidePropsContext } from "next";
-import Layout from "../../components/Layout";
 import InvitationCard from "../../components/Cards/InvitationCard";
 import { createInnerTRPCContext } from "../../server/api/trpc";
 import { getServerAuthSession } from "../../server/auth";
 import { api } from "../../utils/api";
 import ssgHelpers from "../../utils/ssgHelpers";
+import { FaArrowRight } from "react-icons/fa";
+import { MdCalendarToday, MdGroup } from "react-icons/md";
+import PageLayout from "../../components/Layouts/PageLayout";
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     const session = await getServerAuthSession(ctx);
@@ -35,20 +37,31 @@ export default function InvitationsPage() {
             <Head>
                 <title>Pigeon Home</title>
             </Head>
-            <Layout>
+            <PageLayout>
                 <main className="mt-20 mb-16 px-2">
                     {data?.length ? data.map((el, i) => (
                         <Link href={`/invitations/${el.id}`} key={i}>
-                            <InvitationCard
-                                title={el.title}
-                                description={el.description}
-                                date={el.date}
-                                guestCount={el._count.guests}
-                            />
+                            <InvitationCard className="m-2">
+                                <InvitationCard.Heading text={el.title}>
+                                    <FaArrowRight className="text-gray-400" />
+                                </InvitationCard.Heading>
+                                <InvitationCard.HorizontalInfo>
+                                    <p className="flex items-center">
+                                        <MdCalendarToday className="w-4 aspect-square mr-2" />
+                                        <b>{el.date.toDateString()}</b>
+                                    </p>
+                                    <p className="flex items-center">
+                                        <MdGroup className="w-4 aspect-square mr-2" />
+                                        <b>{el._count.guests}</b>
+                                    </p>
+                                </InvitationCard.HorizontalInfo>
+                            </InvitationCard>
                         </Link>
-                    )) : <h1 className="text-center text-gray-500 font-medium p-10">You have no invitations created. Press the button to do so.</h1>}
+                    )) : <h1 className="p-10 text-center text-gray-500 font-medium">
+                        You have no invitations created. Press the button to do so.
+                    </h1>}
                 </main>
-            </Layout>
+            </PageLayout>
         </>
     );
 }

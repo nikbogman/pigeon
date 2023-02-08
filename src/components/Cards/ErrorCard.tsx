@@ -1,11 +1,11 @@
 import { Alert } from "flowbite-react";
 import { ReactNode } from "react";
-import { HiInformationCircle } from "react-icons/hi";
+import { FaExclamationCircle } from "react-icons/fa";
 
-export default function ErrorCards(props: { className: string; children: ReactNode }) {
-    return <Alert
-        className={props.className}
-        color="failure"
-        icon={HiInformationCircle}
-    >{props.children}</Alert>
-}
+const ErrorCard: React.FC<{ className?: string; children: ReactNode; }> = (props) => <Alert
+    className={props.className}
+    color="failure"
+    icon={FaExclamationCircle}
+>{props.children}</Alert>
+
+export default ErrorCard;

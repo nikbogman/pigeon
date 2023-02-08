@@ -1,5 +1,5 @@
 import Datepicker from "tailwind-datepicker-react";
-import { useState } from "react";
+import useToggle from "../../hooks/useToggle";
 
 const options = {
     title: "",
@@ -24,16 +24,15 @@ const options = {
     language: "en",
 } as const;
 
-type TProps = {
+export default function DatePicker({ setDate }: {
     setDate: (v: Date) => void;
-}
-export default function DatePicker({ setDate }: TProps) {
-    const [show, setShow] = useState<boolean>(false);
+}) {
+    const [isToggled, toggle] = useToggle();
 
     return <Datepicker
         options={options}
         onChange={(selectedDate: Date) => setDate(selectedDate)}
-        show={show}
-        setShow={(state: boolean) => setShow(state)}
+        show={isToggled}
+        setShow={toggle}
     />
 }

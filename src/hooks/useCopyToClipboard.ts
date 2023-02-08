@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState } from "react";
 
 // https://usehooks-ts.com/react-hook/use-copy-to-clipboard
 type CopiedValue = string | null;

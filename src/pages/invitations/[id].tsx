@@ -1,8 +1,6 @@
 import type { GetServerSidePropsContext } from "next";
 import { Label, Select } from "flowbite-react";
 import Head from "next/head";
-import Layout from "../../components/Layout";
-import { Card } from "flowbite-react";
 import RemoveModal from "../../components/Modals/RemoveModal";
 import type { Invitation, Guest } from "@prisma/client";
 import { serialize } from "superjson";
@@ -13,6 +11,8 @@ import { getServerAuthSession } from "../../server/auth";
 import generateQrCode from "../../lib/generateQrCode";
 import GuestCard from "../../components/Cards/GuestCard";
 import { MdCalendarToday, MdGroup } from "react-icons/md";
+import InvitationCard from "../../components/Cards/InvitationCard";
+import PageLayout from "../../components/Layouts/PageLayout";
 
 type IProps = {
     invitation: Invitation & {
@@ -53,43 +53,38 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     }
 }
 
+const filters: { [key: string]: (guests: Guest[]) => Guest[] } = {
+    "Attending": (guests: Guest[]) => guests.filter(g => g.attending === true),
+    "Not Attending": (guests: Guest[]) => guests.filter(g => g.attending === false),
+}
+
 export default function InvitationPage({ invitation, dataUrl }: IProps) {
     const [filter, setFilter] = useState<string>('All');
 
-    const data = (() => {
-        switch (filter) {
-            case "Attending":
-                return invitation.guests.filter(g => g.attending === true);
-            case "Not Attending":
-                return invitation.guests.filter(g => g.attending === false);
-            default:
-                return invitation.guests;
-        }
-    })()
-
+    const data = filters[filter] ? filters[filter]!(invitation.guests) : invitation.guests;
 
     return <>
         <Head>
             <title>{invitation.title}</title>
         </Head>
-        <Layout>
+        <PageLayout>
             <main className="mt-20 mb-16">
-                <Card className="mx-2">
-                    <div className="flex w-full items-center justify-between">
-                        <h5 className="text-2xl font-bold truncate mr-5">{invitation.title}</h5>
+                <InvitationCard className="m-2">
+                    <InvitationCard.Heading text={invitation.title}>
                         <RemoveModal />
-                    </div>
-                    <p className="flex w-full items-center text-gray-700 tracking-tight text-xs">
-                        <MdCalendarToday className="w-4 aspect-square mr-2" />
-                        <b>{invitation.date}</b>
-                    </p>
+                    </InvitationCard.Heading>
+                    <InvitationCard.HorizontalInfo>
+                        <p className="flex items-center">
+                            <MdCalendarToday className="w-4 aspect-square mr-2" />
+                            <b>{invitation.date}</b>
+                        </p>
+                    </InvitationCard.HorizontalInfo>
                     <p className="text-sm">{invitation.description}</p>
-                </Card>
+                </InvitationCard>
+
                 <div className="mt-5 w-full flex items-center justify-around">
                     <div className="flex items-center">
-                        <div className="mr-2 items-center">
-                            <Label htmlFor="g" value="Filter" className="text-lg" />
-                        </div>
+                        <Label htmlFor="g" value="Filter" className="text-lg mr-4" />
                         <Select
                             id="show"
                             className="w-fit"
@@ -107,9 +102,15 @@ export default function InvitationPage({ invitation, dataUrl }: IProps) {
                 </div>
 
                 <div className="mt-5">
-                    {data.map((g, i) => <GuestCard guest={g} dataUrl={dataUrl} key={i} />)}
+                    {data.length >= 1 ?
+                        data.map((g, i) => <GuestCard guest={g} dataUrl={dataUrl} key={i} />)
+                        :
+                        <h1 className="p-10 text-center text-gray-500 font-medium">
+                            {filter === "Attending" ? "All guests are attending" : "No one is attending currently"}
+                        </h1>
+                    }
                 </div>
             </main>
-        </Layout>
+        </PageLayout>
     </>
 }

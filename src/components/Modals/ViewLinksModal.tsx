@@ -1,30 +1,30 @@
 import { Modal, Button } from "flowbite-react";
-import { useState } from "react";
 import { FaEye } from "react-icons/fa";
-import useCopyToClipboard from "../hooks/useCopyToClipboard";
+import useCopyToClipboard from "../../hooks/useCopyToClipboard";
 import { MdOutlineQrCode2, MdLink } from "react-icons/md";
 import Image from "next/image";
+import useToggle from "../../hooks/useToggle";
 type TProps = {
     name: string;
     dataUrl: string;
 }
 
 export default function QrModal({ dataUrl, name }: TProps) {
-    const [open, setOpen] = useState<boolean>(false)
+    const [isToggled, toggle] = useToggle()
     const [_, copy] = useCopyToClipboard();
 
     return <>
         <Button
             color="light"
-            onClick={() => setOpen(true)}>
+            onClick={toggle}>
             <FaEye />
         </Button>
         <Modal
-            show={open}
+            show={isToggled}
             size="xl"
             popup={true}
             style={{ height: '100vh' }}
-            onClose={() => setOpen(false)}
+            onClose={() => toggle(false)}
         >
             <Modal.Header />
             <Modal.Body className="flex flex-col items-center pt-10">
