@@ -13,11 +13,14 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const trpcHelper = ssgHelpers(trpcContext);
     try {
         const guest = await trpcHelper.guest.getByIdAndInvitation.fetch(ctx.params!.id as string);
-        return {
-            props: {
+        const props = {
+            guest: {
                 ...guest,
                 invitation: serialize({ ...guest.invitation, date: guest.invitation.date.toDateString() }).json,
             }
+        }
+        return {
+            props
         }
 
     } catch (error) {
@@ -47,7 +50,7 @@ export default function GuestPage({ guest }: IProps) {
 
     return <>
         <main className="flex flex-col items-center justify-center p-5 h-screen leading-loose">
-            <h1 >{guest.invitation.title}</h1>
+            <h1>{guest.invitation.title}</h1>
             <p>{guest.invitation.description}</p>
             <p className="font-light text-xs mt-5">On: <b>{guest.invitation.date}</b></p>
             <form onSubmit={submitEvent} className="mt-5">

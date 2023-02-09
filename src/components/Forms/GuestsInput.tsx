@@ -50,7 +50,7 @@ export default function GuestsInput() {
                             },
                             validate: (value, formValues) => {
                                 const existing: string[] = formValues.guests.map((g: { name: string }) => g.name)
-                                const unique = existing.indexOf(value) === index;
+                                const unique = existing.map(str => str.replace(/\s/g, '')).map(console.log).indexOf(value.replace(/\s/g, '')) === index;
                                 return unique || "Please provide only unique names!";
                             }
                         })}
