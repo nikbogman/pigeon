@@ -1,10 +1,11 @@
 import { useFormContext } from "react-hook-form";
 import { Button, Label, TextInput } from "flowbite-react";
 import { FaTrash, FaPlus } from "react-icons/fa";
-import { useFieldArray } from "react-hook-form";
+import { useFieldArray, type FieldValues } from "react-hook-form";
 import TrashButton from "../Buttons/TrashButton";
 import ErrorCard from "../Cards/ErrorCard";
 import { MdGroup } from "react-icons/md";
+
 export default function GuestsInput() {
     const methods = useFormContext();
     const { fields, insert, remove, replace } = useFieldArray({
@@ -34,7 +35,7 @@ export default function GuestsInput() {
             >Clear all<FaTrash className="ml-5" /></Button>
         </div>
         {fields.map((field, index) => {
-            const errors = methods.formState.errors.guests as any;
+            const errors = methods.formState.errors.guests;
             return <div className="my-2" key={field.id}>
                 <div className={`${fields.length === 1 ? `block` : `flex items-center`} h-fit max-[640px]:w-full`}>
                     <TextInput
@@ -48,17 +49,26 @@ export default function GuestsInput() {
                                 value: /^[a-z ,.'-]+$/i,
                                 message: "Please provide only valid names!"
                             },
-                            validate: (value, formValues) => {
-                                const existing: string[] = formValues.guests.map((g: { name: string }) => g.name)
-                                const unique = existing.map(str => str.replace(/\s/g, '')).map(console.log).indexOf(value.replace(/\s/g, '')) === index;
-                                return unique || "Please provide only unique names!";
+                            // This hack saved me but is not good for the long term
+                            validate: (value: string, formValues: Record<string, { name: string }[]>) => {
+                                if (formValues.guests === undefined) return;
+                                const existing: string[] = formValues.guests
+                                    .map((g: { name: string }) => g.name)
+                                    .map((str: string) => str.replace(/\s/g, ''))
+                                const unique = existing.lastIndexOf(value.replace(/\s/g, ''));
+                                console.log(unique)
+                                // could be broken
+                                return unique === index || "Please provide only unique names!";
                             }
                         })}
                     />
                     {fields.length > 1 ? <TrashButton onClick={() => remove(index)} /> : null}
                 </div>
-                {errors && errors[index] ? <ErrorCard className="mt-2">
-                    <span>{errors[index].name.message}</span>
+                {errors && Object.values(errors)[index] ? <ErrorCard className="mt-2">
+                    <span>{
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                        Object.values(errors)[index].name.message
+                    }</span>
                 </ErrorCard> : null}
             </div>
         })}

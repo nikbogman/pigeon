@@ -27,7 +27,7 @@ const options = {
 export default function DatePicker({ setDate }: {
     setDate: (v: Date) => void;
 }) {
-    const [isToggled, toggle] = useToggle();
+    const [isToggled, toggle]: [boolean, () => void] = useToggle();
 
     return <Datepicker
         options={options}

@@ -10,7 +10,7 @@ type TProps = {
 }
 
 export default function QrModal({ dataUrl, name }: TProps) {
-    const [isToggled, toggle] = useToggle()
+    const [isToggled, toggle]: [boolean, () => void] = useToggle()
     const [_, copy] = useCopyToClipboard();
 
     return <>
@@ -24,7 +24,7 @@ export default function QrModal({ dataUrl, name }: TProps) {
             size="xl"
             popup={true}
             style={{ height: '100vh' }}
-            onClose={() => toggle(false)}
+            onClose={toggle}
         >
             <Modal.Header />
             <Modal.Body className="flex flex-col items-center pt-10">
