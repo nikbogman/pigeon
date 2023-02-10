@@ -1,4 +1,4 @@
-!process.env.SKIP_ENV_VALIDATION && (await import("./src/env/server.mjs"));
+//!process.env.SKIP_ENV_VALIDATION && (await import("./src/env/server.mjs"));
 
 import withPWA from "next-pwa";
 
