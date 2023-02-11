@@ -42,7 +42,11 @@ TODO:
         [x] remove /:id ssg
 
 
-:: run command -->--> docker build -t ct3a-docker --build-arg NEXT_PUBLIC_CLIENTVAR=clientvar NODE_ENV=production . 
+:: run command -->--> 
+docker build -t ct3a-docker --build-arg NEXTAUTH_URL = http://localhost:3000 --build-arg NEXTAUTH_SECRET = DJb0bk4l4JM7neGfhaeWgq7MT5C4Cf2SJH0qNiFauhc= --build-arg GOOGLE_CLIENT_ID = 881328414445-84g17ushbgj8b3hha3j9b4qdkvk5m332.apps.googleusercontent.com --build-arg GOOGLE_CLIENT_SECRET = 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 --build-arg DATABASE_URL = mysql://root:FKXDIUH7Q29kS4UN9han@containers-us-west-57.railway.app:7410/railway --build-arg NODE_ENV = production --build-arg NEXT_PUBLIC_CLIENTVAR = clientvar .
 docker run -p 3000:3000 -e DATABASE_URL="mysql://root:FKXDIUH7Q29kS4UN9han@containers-us-west-57.railway.app:7410/railway" ct3a-docker
 
 -> better error handling
+
+docker build -t ct3a-docker --build-arg NEXT_PUBLIC_CLIENTVAR=clientvar --build-arg NODE_ENV=production .
+docker run -p 3000:3000 -e DATABASE_URL="database_url_goes_here" ct3a-docker
