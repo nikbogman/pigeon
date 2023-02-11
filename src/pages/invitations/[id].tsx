@@ -38,7 +38,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     try {
         const invitation = await trpcHelper.invitation.getByIdWithGuests.fetch(ctx.params!.id as string);
-        const dataUrl = await generateQrCode();
+        const dataUrl = await generateQrCode(ctx.params!.id as string);
         return {
             props: {
                 invitation: serialize({ ...invitation, date: invitation?.date.toDateString() }).json,
