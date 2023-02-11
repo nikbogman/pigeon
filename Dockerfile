@@ -23,13 +23,11 @@ RUN \
 
 FROM --platform=linux/amd64 node:16-alpine3.17 AS builder
 ARG NODE_ENV
-ARG NEXT_PUBLIC_CLIENTVAR
 ARG NEXTAUTH_URL 
 ARG NEXTAUTH_SECRET 
 ARG GOOGLE_CLIENT_ID 
 ARG GOOGLE_CLIENT_SECRET 
 ARG DATABASE_URL 
-ARG NODE_ENV 
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -48,6 +46,8 @@ RUN \
 FROM --platform=linux/amd64 node:16-alpine3.17 AS runner
 WORKDIR /app
 
+ENV NEXT_PUBLIC_CLIENTVAR
+ENV NEXT_PUBLIC_URL
 ENV NODE_ENV production
 
 # ENV NEXT_TELEMETRY_DISABLED 1
