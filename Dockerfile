@@ -5,7 +5,8 @@ RUN apk add --no-cache libc6-compat openssl1.1-compat
 WORKDIR /app
 
 # Install Prisma Client - remove if not using Prisma
-
+RUN ls
+RUN ls prisma
 COPY prisma ./
 
 # Install dependencies based on the preferred package manager
@@ -33,7 +34,8 @@ ARG NEXT_PUBLIC_URL
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
+RUN ls
+RUN ls prisma
 # ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN \
@@ -67,6 +69,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 USER nextjs
 EXPOSE 3000
 ENV PORT 3000
-
+RUN ls
+RUN ls prisma
 RUN npx prisma generate
 CMD ["node", "server.js"]
