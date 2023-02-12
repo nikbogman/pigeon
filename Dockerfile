@@ -54,7 +54,8 @@ ENV NODE_ENV production
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
-RUN npx prisma db push
+
+COPY --from=builder /app/prisma ./prisma
 
 COPY --from=builder /app/next.config.mjs ./
 COPY --from=builder /app/public ./public
@@ -67,4 +68,5 @@ USER nextjs
 EXPOSE 3000
 ENV PORT 3000
 
+RUN npx prisma generate
 CMD ["node", "server.js"]
