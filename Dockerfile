@@ -71,5 +71,5 @@ EXPOSE 3000
 ENV PORT 3000
 RUN ls
 RUN ls prisma
-RUN npx prisma generate
+
 CMD ["node", "server.js"]
