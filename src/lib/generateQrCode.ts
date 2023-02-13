@@ -2,6 +2,5 @@ import qr from "qrcode";
 import { env } from "../env/client.mjs";
 
 export default async function generateQrCode(id: string) {
-    console.log(`${env.NEXT_PUBLIC_URL}/guests/${id}`)
-    return qr.toDataURL(`${env.NEXT_PUBLIC_URL}/guests/${id}`, { width: 200, margin: 1 });
+    return qr.toDataURL(`${env.NEXT_PUBLIC_URL}guests/${id}`, { width: 200, margin: 1 });
 }

@@ -34,7 +34,7 @@ export default function QrModal({ dataUrl, name, id }: TProps) {
                 <h1 className="font-bold text-xl mt-5">{name}</h1>
                 <Button color="gray" className="w-full mt-5 mb-2" onClick={() => copy(dataUrl)}>
                     <MdOutlineQrCode2 className="mr-5" />Copy QR</Button>
-                <Button gradientDuoTone="cyanToBlue" className="w-full" onClick={() => copy(`${env.NEXT_PUBLIC_URL}/guests/${id}`)}>
+                <Button gradientDuoTone="cyanToBlue" className="w-full" onClick={() => copy(`${env.NEXT_PUBLIC_URL}guests/${id}`)}>
                     <MdLink className="mr-5" />Copy link</Button>
             </Modal.Body>
         </Modal>
