@@ -1,6 +1,6 @@
 ##### DEPENDENCIES
 
-FROM --platform=linux/amd64 node:16-alpine3.17 AS deps
+FROM node:16-alpine3.17 AS deps
 RUN apk add --no-cache libc6-compat openssl1.1-compat
 WORKDIR /app
 
@@ -22,7 +22,7 @@ RUN \
 
 ##### BUILDER
 
-FROM --platform=linux/amd64 node:16-alpine3.17 AS builder
+FROM node:16-alpine3.17 AS builder
 ARG NODE_ENV
 ARG NEXTAUTH_URL 
 ARG NEXTAUTH_SECRET 
@@ -45,9 +45,10 @@ RUN \
  else echo "Lockfile not found." && exit 1; \
  fi
 
+RUN yarn prisma generate
 ##### RUNNER
 
-FROM --platform=linux/amd64 node:16-alpine3.17 AS runner
+FROM node:16-alpine3.17 AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
@@ -69,7 +70,5 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 USER nextjs
 EXPOSE 3000
 ENV PORT 3000
-RUN ls
-RUN ls prisma
 
 CMD ["node", "server.js"]
