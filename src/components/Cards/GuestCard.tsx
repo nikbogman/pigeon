@@ -13,7 +13,7 @@ const GuestCard: React.FC<{
     <div className="flex items-center justify-between">
         <h5 className="text-lg font-semibold truncate">{props.guest.name}</h5>
         <div className="grid grid-cols-2 gap-1">
-            <ViewLinksModal dataUrl={props.dataUrl} name={props.guest.name} />
+            <ViewLinksModal dataUrl={props.dataUrl} name={props.guest.id} id={props.guest.id} />
             <QrDownload dataUrl={props.dataUrl} name={props.guest.name.replace(' ', '_')} />
         </div>
     </div>
