@@ -6,8 +6,8 @@ import Image from "next/image";
 import useToggle from "../../hooks/useToggle";
 import { env } from "../../env/client.mjs";
 type TProps = {
-    id: string;
     name: string;
+    id: string;
     dataUrl: string;
 }
 
