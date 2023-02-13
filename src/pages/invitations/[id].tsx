@@ -8,19 +8,22 @@ import { useState } from "react";
 import ssgHelpers from "../../utils/ssgHelpers";
 import { createInnerTRPCContext } from "../../server/api/trpc";
 import { getServerAuthSession } from "../../server/auth";
-import generateQrCode from "../../lib/generateQrCode";
 import GuestCard from "../../components/Cards/GuestCard";
 import { MdCalendarToday, MdGroup } from "react-icons/md";
 import InvitationCard from "../../components/Cards/InvitationCard";
 import PageLayout from "../../components/Layouts/PageLayout";
 
+type GuestsType = Guest & {
+    dataUrl: string;
+    url: string;
+}
+
 type IProps = {
     invitation: Invitation & {
-        guests: Guest[]
+        guests: GuestsType[]
     } & {
         date: string
     },
-    dataUrl: string;
 }
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
@@ -38,11 +41,9 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     try {
         const invitation = await trpcHelper.invitation.getByIdWithGuests.fetch(ctx.params!.id as string);
-        const dataUrl = await generateQrCode(ctx.params!.id as string);
         return {
             props: {
                 invitation: serialize({ ...invitation, date: invitation?.date.toDateString() }).json,
-                dataUrl
             }
         }
 
@@ -53,12 +54,12 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     }
 }
 
-const filters: { [key: string]: (guests: Guest[]) => Guest[] } = {
-    "Attending": (guests: Guest[]) => guests.filter(g => g.attending === true),
-    "Not Attending": (guests: Guest[]) => guests.filter(g => g.attending === false),
+const filters: { [key: string]: (guests: GuestsType[]) => GuestsType[] } = {
+    "Attending": (guests: GuestsType[]) => guests.filter(g => g.attending === true),
+    "Not Attending": (guests: GuestsType[]) => guests.filter(g => g.attending === false),
 }
 
-export default function InvitationPage({ invitation, dataUrl }: IProps) {
+export default function InvitationPage({ invitation }: IProps) {
     const [filter, setFilter] = useState<string>('All');
 
     const data = filters[filter] ? filters[filter]!(invitation.guests) : invitation.guests;
@@ -103,7 +104,7 @@ export default function InvitationPage({ invitation, dataUrl }: IProps) {
 
                 <div className="mt-5">
                     {data.length >= 1 ?
-                        data.map((g, i) => <GuestCard guest={g} dataUrl={dataUrl} key={i} />)
+                        data.map((g, i) => <GuestCard guest={g} key={i} />)
                         :
                         <h1 className="p-10 text-center text-gray-500 font-medium">
                             {filter === "Attending" ? "All guests are attending" : "No one is attending currently"}

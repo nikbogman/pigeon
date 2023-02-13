@@ -7,11 +7,11 @@ import useToggle from "../../hooks/useToggle";
 import { env } from "../../env/client.mjs";
 type TProps = {
     name: string;
-    id: string;
+    url: string;
     dataUrl: string;
 }
 
-export default function QrModal({ dataUrl, name, id }: TProps) {
+export default function QrModal({ dataUrl, name, url }: TProps) {
     const [isToggled, toggle]: [boolean, () => void] = useToggle()
     const [_, copy] = useCopyToClipboard();
 
@@ -34,7 +34,7 @@ export default function QrModal({ dataUrl, name, id }: TProps) {
                 <h1 className="font-bold text-xl mt-5">{name}</h1>
                 <Button color="gray" className="w-full mt-5 mb-2" onClick={() => copy(dataUrl)}>
                     <MdOutlineQrCode2 className="mr-5" />Copy QR</Button>
-                <Button gradientDuoTone="cyanToBlue" className="w-full" onClick={() => copy(`${env.NEXT_PUBLIC_URL}guests/${id}`)}>
+                <Button gradientDuoTone="cyanToBlue" className="w-full" onClick={() => copy(url)}>
                     <MdLink className="mr-5" />Copy link</Button>
             </Modal.Body>
         </Modal>

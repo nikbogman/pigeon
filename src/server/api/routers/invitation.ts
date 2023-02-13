@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { env } from "../../../env/server.mjs";
+import generateQrCode from "../../../lib/generateQrCode";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const invitationRouter = createTRPCRouter({
@@ -39,11 +41,12 @@ export const invitationRouter = createTRPCRouter({
                     }
                 }
             })
+
         }),
     getByIdWithGuests: protectedProcedure
         .input(z.string())
         .query(async ({ input, ctx }) => {
-            return ctx.prisma.invitation.findUniqueOrThrow({
+            const invitation = await ctx.prisma.invitation.findUniqueOrThrow({
                 where: {
                     id: input
                 },
@@ -51,6 +54,15 @@ export const invitationRouter = createTRPCRouter({
                     guests: true
                 }
             })
+            const guests = [];
+            for (const guest of invitation.guests) {
+                guests.push({
+                    ...guest,
+                    dataUrl: await generateQrCode(guest.id),
+                    url: `${env.NEXTAUTH_URL}guests/${guest.id}`
+                })
+            }
+            return { ...invitation, guests }
         }),
     removeById: protectedProcedure
         .input(z.string())
