@@ -46,7 +46,7 @@ export default function GuestsInput() {
                         className="max-[640px]:w-full"
                         {...methods.register(`guests.${index}.name` as const, {
                             pattern: {
-                                value: /^[a-z ,.'-]+$/i,
+                                value: /[\p{L} '.,]+/i,
                                 message: "Please provide only valid names!"
                             },
                             // This hack saved me but is not good for the long term
@@ -56,7 +56,6 @@ export default function GuestsInput() {
                                     .map((g: { name: string }) => g.name)
                                     .map((str: string) => str.replace(/\s/g, ''))
                                 const unique = existing.lastIndexOf(value.replace(/\s/g, ''));
-                                console.log(unique)
                                 // could be broken
                                 return unique === index || "Please provide only unique names!";
                             }

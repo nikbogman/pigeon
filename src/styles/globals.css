@@ -4,7 +4,13 @@
 
 @layer base {
     * {
-        @apply text-[calc(10px+2vmin)];
+        @apply text-[calc(10px+1vmin)];
+    }
+
+    @media (max-width: 640px) {
+        * {
+            @apply text-[calc(10px+2vmin)];
+        }
     }
 
     h1 {

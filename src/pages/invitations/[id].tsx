@@ -107,7 +107,7 @@ export default function InvitationPage({ invitation }: IProps) {
                         data.map((g, i) => <GuestCard guest={g} key={i} />)
                         :
                         <h1 className="p-10 text-center text-gray-500 font-medium">
-                            {filter === "Attending" ? "All guests are attending" : "No one is attending currently"}
+                            {filter === "Attending" ? "No one is attending currently" : "All guests are attending"}
                         </h1>
                     }
                 </div>

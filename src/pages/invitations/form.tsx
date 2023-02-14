@@ -23,7 +23,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 
 const textFieldValidator = {
     pattern: {
-        value: /^[a-zA-Z ]*$/,
+        value: /[\p{L}\s'.?!,\n]/,
         message: "Only characters are allowed in the text fields."
     }
 }
