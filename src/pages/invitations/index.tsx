@@ -38,7 +38,7 @@ export default function InvitationsPage() {
                 <title>Pigeon Home</title>
             </Head>
             <PageLayout>
-                <main className="my-16 px-2 mx-10">
+                <main className="my-16 px-2 md:mx-10">
                     {data?.length ? <div className="grid lg:grid-cols-3 md:grid-cols-2 max-sm:grid-cols-1 gap-2">{
                         data.map((el, i) => (
                             <Link href={`/invitations/${el.id}`} key={i}>
