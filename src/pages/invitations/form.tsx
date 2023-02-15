@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { Button, TextInput, Textarea, Label } from "flowbite-react";
+import { Button, TextInput, Textarea, Label, Alert } from "flowbite-react";
 import { FormProvider } from "react-hook-form";
 import { api } from "../../utils/api";
 import { useRouter } from "next/router";
@@ -56,6 +56,14 @@ export default function InvitationForm() {
                 Create an invitation for event
             </h1>
             <FormProvider {...methods}>
+                <Alert color="info">
+                    <span>
+                        <span className="font-medium">
+                            Info alert!
+                        </span>
+                        {' '}You should provide at least two words in each text input, otherwise it does not count as text.
+                    </span>
+                </Alert>
                 <form onSubmit={methods.handleSubmit(submit)} className="p-4 border-t-2 rounded-lg shadow-lg">
                     <div className="text-lg mb-2">
                         <Label htmlFor="title" value="Title" />
