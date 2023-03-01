@@ -26,7 +26,8 @@
     "**/*.tsx",
     "**/*.cjs",
     "**/*.mjs",
-    "next.config.mjs"
+    "next.config.mjs",
+    "src/pages/events/index.tss"
   ],
   "exclude": [
     "node_modules"

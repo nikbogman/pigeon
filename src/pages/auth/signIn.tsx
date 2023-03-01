@@ -1,12 +1,18 @@
-import { Button } from "flowbite-react";
+import { Button } from "@mantine/core";
 import { FaGoogle } from "react-icons/fa";
 import { signIn } from "next-auth/react";
+
 export default function SignInPage() {
     return <div className="min-h-screen	flex justify-center items-center">
-        <Button className="bg-gradient-to-br from-cyan-500 to-blue-500" size='xl'
-            onClick={() => signIn('google', { callbackUrl: '/invitations' })}
+        <Button
+            variant="gradient"
+            leftIcon={<FaGoogle className="mr-5" />}
+            gradient={{ from: 'cyan', to: 'blue' }}
+            size="xl"
+            radius="md"
+            onClick={() => signIn('google', { callbackUrl: '/contacts' })}
         >
-            <FaGoogle className="mr-5" />Sign in with Google
+            Sign in with Google
         </Button>
     </div>
 }

@@ -11,7 +11,7 @@ export function getServerSideProps() {
   }
 }
 
-const Home: NextPage = () => {
+export default function HomePage() {
   return (
     <>
       <Head>
@@ -23,5 +23,3 @@ const Home: NextPage = () => {
     </>
   );
 };
-
-export default Home;

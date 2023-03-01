@@ -10,7 +10,7 @@ import TrashButton from "../Buttons/TrashButton";
 export default function RemoveModal() {
     const router = useRouter();
     const [isToggled, toggle]: [boolean, () => void] = useToggle();
-    const mutation = api.invitation.removeById.useMutation();
+    const mutation = api.event.removeById.useMutation();
 
     return <>
         <TrashButton onClick={toggle} />

@@ -1,52 +1,17 @@
 TODO:
--> general
-    -> server
-        [x] handle 404 in paths 
-        [-] order by
-            [x] add createdAt in prisma for most recent
-        [x] handle qrcodes in ssg
-        [x] add trpc guest routes
-
-    -> auth
-        [x] map SignIn page in NextAuth
-        [x] dry getServerSideProps
-
-    -> design
-        f[] better error handling
-        f[] better folder structure
-        ?[] replace flowbite react with plain flowbite maybe
-        [] add loading state for queries
-        [x] add favicon
-        [] work on index page
-        [x] make text large
-        [x] qr code components
-
--> /invitation
-    -> api
-        [x] create
-        [x] get /:id
+-> /contact
     -> view
-        [] rename form.tsx
-        [x] create
-        [x] get /:id
-        [x] modal on delete for /:id
-        [x] filter in guest table
-
--> /guests
-    -> view
-        [] pass query to answer page instead of having two pages
-        [x] get invitation /:id 
-            [x] better design
-            [x] add thank you and sorry pages
+        [x] add remove modal
+        [x] add edit modal
     -> general
-        [x] remove /:id ssg
+        [x] pass refetch function as tan-query context
+        [x] refetch on mutation
+        [] add validation to input
+-> general
+    -> replace tailwind with plain mantine
 
-
-:: run command -->--> 
 docker build -t ct3a-docker --build-arg NEXTAUTH_URL = http://localhost:3000 --build-arg NEXTAUTH_SECRET = DJb0bk4l4JM7neGfhaeWgq7MT5C4Cf2SJH0qNiFauhc= --build-arg GOOGLE_CLIENT_ID = 881328414445-84g17ushbgj8b3hha3j9b4qdkvk5m332.apps.googleusercontent.com --build-arg GOOGLE_CLIENT_SECRET = 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 --build-arg DATABASE_URL = mysql://root:FKXDIUH7Q29kS4UN9han@containers-us-west-57.railway.app:7410/railway --build-arg NODE_ENV = production --build-arg NEXT_PUBLIC_CLIENTVAR = clientvar .
 docker run -p 3000:3000 -e DATABASE_URL="mysql://root:FKXDIUH7Q29kS4UN9han@containers-us-west-57.railway.app:7410/railway" ct3a-docker
 
--> better error handling
 
-docker build -t ct3a-docker --build-arg NEXT_PUBLIC_CLIENTVAR=clientvar --build-arg NODE_ENV=production .
-docker run -p 3000:3000 -e DATABASE_URL="database_url_goes_here" ct3a-docker
+<TPageData>(options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined) => Promise<QueryObserverResult<Contact[], TRPCClientErrorLike<BuildProcedure<"query", { _config: RootConfig<...>; ... 5 more ...; _output_out: unique symbol; }, Contact[]>>>>
