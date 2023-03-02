@@ -1,18 +1,13 @@
 import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import { FormProvider, useForm } from "react-hook-form";
-import SelectContactModal from "../../../components/Modals/SelectContactsModal";
+import SelectContacts from "../../../components/Modals/Contact/Select";
 import { createInnerTRPCContext } from "../../../server/api/trpc";
 import { getServerAuthSession } from "../../../server/auth";
 import { api } from "../../../utils/api";
 import ssgHelpers from "../../../utils/ssgHelpers";
+import { useForm, FormProvider, type FormValues } from "../../../context/SelectContactContext";
 
-type Data = {
-    title: string;
-    date: Date;
-    description: string;
-    attendeeIds: string[];
-}
+
 
 // prefetch all contacts
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
@@ -32,28 +27,28 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         }
     }
 }
-
+// rework with csr
 export default function CreateEventPage() {
     const contacts = api.contact.getAll.useQuery().data;
     const mutation = api.event.create.useMutation();
     const router = useRouter();
 
-    const methods = useForm({
-        defaultValues: {
+    const form = useForm({
+        initialValues: {
             title: "",
             date: new Date(),
             description: "",
             attendeeIds: []
-        } satisfies Data
+        }
     });
 
-    const onSubmit = methods.handleSubmit(async (data) => {
-        console.log(data)
+    const onSubmit = form.onSubmit(async (data) => {
+        console.log(data.attendeeIds)
     })
 
-    return <FormProvider {...methods}>
+    return <FormProvider form={form}>
         <form onSubmit={onSubmit}>
-            {contacts && <SelectContactModal contacts={contacts} />}
+            {contacts && <SelectContacts contacts={contacts} />}
             <button type="submit">Submit</button>
         </form>
     </FormProvider>

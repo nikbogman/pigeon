@@ -8,7 +8,6 @@ import ContactModalContext from "../../../context/ContactModalContext";
 
 const RemoveContactModal: React.FC<{
     id: string,
-    refetch: () => Promise<unknown>
 }> = (props) => {
     const { refetch } = useContext(ContactModalContext);
 
