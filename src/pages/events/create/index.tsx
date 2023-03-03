@@ -1,37 +1,17 @@
-import type { GetServerSideProps } from "next";
-import { useRouter } from "next/router";
 import SelectContacts from "../../../components/Modals/Contact/Select";
-import { createInnerTRPCContext } from "../../../server/api/trpc";
-import { getServerAuthSession } from "../../../server/auth";
 import { api } from "../../../utils/api";
-import ssgHelpers from "../../../utils/ssgHelpers";
-import { useForm, FormProvider, type FormValues } from "../../../context/SelectContactContext";
+import { useForm, FormProvider } from "../../../context/SelectContactContext";
+import { TextInput } from "@mantine/core";
+import useAuthenticated from "../../../hooks/useAuthenticated";
 
-
-
-// prefetch all contacts
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-    const session = await getServerAuthSession(ctx);
-    if (!session) return {
-        redirect: {
-            destination: '/auth/signIn',
-            permanent: false,
-        }
-    }
-    const trpcContext = await createInnerTRPCContext({ session });
-    const trpcHelper = ssgHelpers(trpcContext);
-    await trpcHelper.contact.getAll.prefetch();
-    return {
-        props: {
-            trpcState: trpcHelper.dehydrate()
-        }
-    }
-}
-// rework with csr
 export default function CreateEventPage() {
-    const contacts = api.contact.getAll.useQuery().data;
+    const { status } = useAuthenticated();
+
+    const contacts = api.contact.getAll.useQuery(undefined, {
+        enabled: status === "authenticated"
+    }).data;
+
     const mutation = api.event.create.useMutation();
-    const router = useRouter();
 
     const form = useForm({
         initialValues: {
@@ -49,6 +29,23 @@ export default function CreateEventPage() {
     return <FormProvider form={form}>
         <form onSubmit={onSubmit}>
             {contacts && <SelectContacts contacts={contacts} />}
+            <TextInput
+                label="Name"
+                placeholder="John Doe"
+                required={true}
+                size="lg"
+                withAsterisk
+                {...form.getInputProps('title')}
+            />
+            <TextInput
+                label="Email"
+                placeholder="johndoe@mail.com"
+                required={true}
+                size="lg"
+                withAsterisk
+                my="xl"
+                {...form.getInputProps('description')}
+            />
             <button type="submit">Submit</button>
         </form>
     </FormProvider>

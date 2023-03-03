@@ -4,7 +4,8 @@ import ContactCard from "../../components/Cards/ContactCard";
 import useAuthenticated from "../../hooks/useAuthenticated";
 import CreateContactModal from "../../components/Modals/Contact/Create";
 import ContactModalContextProvider from "../../providers/ContactModalContextProvider";
-import { Center, Loader } from "@mantine/core";
+import { Loader } from "@mantine/core";
+
 export default function ContactsPage() {
     const { status } = useAuthenticated();
 
