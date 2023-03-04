@@ -26,12 +26,12 @@ const EditContactModal: React.FC<Props> = (props) => {
         initialValues: { name: "", email: "" } satisfies Data,
 
     });
-
     const onSubmit = form.onSubmit(data => mutation.mutate({ id: props.contact.id, update: data }));
 
     return <>
         <EditButton size={50} onClick={toggle} />
         <Modal
+            centered
             opened={isToggled}
             title={<h2>Edit person to contacts</h2>}
             onClose={toggle}

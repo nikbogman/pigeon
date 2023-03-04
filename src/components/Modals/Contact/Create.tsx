@@ -35,6 +35,7 @@ const CreateContactModal: React.FC = () => {
             </div>
         </div>
         <Modal
+            centered
             opened={isToggled}
             title={<h2>Add person to contacts</h2>}
             onClose={toggle}

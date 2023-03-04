@@ -18,6 +18,7 @@ const RemoveContactModal: React.FC<{
     return <>
         <TrashButton size={50} onClick={toggle} />
         <Modal
+            centered
             opened={isToggled}
             onClose={toggle}
         >
