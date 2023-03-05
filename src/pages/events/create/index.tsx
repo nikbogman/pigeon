@@ -27,8 +27,9 @@ type FormValues = {
 
 export default function CreateEventPage() {
     const { status } = useAuthenticated();
-    const router = useRouter()
-    const contactQuery = api.contact.getAll.useQuery(undefined, {
+    const router = useRouter();
+
+    const query = api.contact.getAll.useQuery(undefined, {
         enabled: status === "authenticated"
     });
 
@@ -45,19 +46,19 @@ export default function CreateEventPage() {
     });
     const onSubmit = form.onSubmit(async (data) => {
         const { attendeeIds, date, ...mutationVariables } = data;
-        const attendees: { name: string, email: string }[] = contactQuery.data!
+        const attendees: { name: string, email: string }[] = query.data!
             .filter(contact => attendeeIds.includes(contact.id))
         await mutation.mutateAsync({ attendees, date: date!, ...mutationVariables })
         await router.push('/events')
     })
 
     const ContactInput = () => {
-        if (contactQuery.data)
+        if (query.data)
             return <MultiSelectContacts
                 {...form.getInputProps('attendeeIds')}
-                data={contactQuery.data.map(c => ({ value: c.id, description: c.email, label: c.name }))}
+                data={query.data.map(c => ({ value: c.id, description: c.email, label: c.name }))}
             />
-        return <Alert icon={<FaExclamationCircle size="1rem" />} title="Bummer!" color="red">
+        return <Alert icon={<FaExclamationCircle />} title="Bummer!" color="red">
             You have contacts to add as attendees. You need to go back and add some.
             <Button
                 leftIcon={<FaArrowLeft />}
@@ -97,7 +98,7 @@ export default function CreateEventPage() {
                     withAsterisk
                     {...form.getInputProps('date')}
                 />
-                {contactQuery.isLoading ? <Center
+                {query.isLoading ? <Center
                     my="xl"
                     mx="auto"
                     h={50}

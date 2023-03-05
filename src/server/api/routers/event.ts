@@ -1,4 +1,5 @@
-import { Event, Attendee } from "@prisma/client";
+import { Event, Attendee, Prisma } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { env } from "../../../env/server.mjs";
 import generateQrCode from "../../../lib/generateQrCode";
@@ -51,26 +52,38 @@ export const eventRouter = createTRPCRouter({
         .input(z.string())
         .query(
             async ({ input, ctx }) => {
-                const event: Event & {
-                    attendees: Attendee[];
-                } = await ctx.prisma.event.findUniqueOrThrow({
-                    where: { id: input },
-                    include: {
-                        attendees: true
+                try {
+                    const event: Event & {
+                        attendees: Attendee[];
+                    } = await ctx.prisma.event.findUniqueOrThrow({
+                        where: { id: input },
+                        include: {
+                            attendees: true,
+                        }
+                    })
+                    const attendees: (Attendee & {
+                        dataUrl: string;
+                        url: string
+                    })[] = [];
+                    for (const attendee of event.attendees) {
+                        attendees.push({
+                            ...attendee,
+                            dataUrl: await generateQrCode(attendee.id),
+                            url: `${env.NEXTAUTH_URL}attendee/${attendee.id}`
+                        })
                     }
-                })
-                const attendees: Array<Attendee & {
-                    dataUrl: string;
-                    url: string
-                }> = new Array();
-                event.attendees.forEach(async attendee => attendees.push({
-                    ...attendee,
-                    dataUrl: await generateQrCode(attendee.id),
-                    url: `${env.NEXTAUTH_URL}attendee/${attendee.id}`
-                }))
-                return {
-                    ...event,
-                    attendees
+                    return { ...event, attendees }
+                } catch (err) {
+                    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+                        if (err.code === 'P2025') throw new TRPCError({
+                            code: 'NOT_FOUND',
+                            message: err.message,
+                        });
+                    }
+                    throw new TRPCError({
+                        code: 'INTERNAL_SERVER_ERROR',
+                        message: 'Something went wrong',
+                    });
                 }
             }
         ),

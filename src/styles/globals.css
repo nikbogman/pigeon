@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
+/* @layer base {
     * {
         @apply text-[calc(10px+1vmin)];
     }
@@ -27,4 +27,4 @@
         @apply text-lg;
         @apply font-semibold;
     }
-}
+} */

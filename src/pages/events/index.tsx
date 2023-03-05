@@ -1,8 +1,10 @@
-import { Button, Loader } from "@mantine/core";
+import { Center, Group, Text, Paper, Flex } from "@mantine/core";
 import Link from "next/link";
 import { FaPlus } from "react-icons/fa";
-import EventCard from "../../components/Cards/EventCard";
+import { HiOutlineArrowRight } from "react-icons/hi";
+import { MdCalendarToday, MdGroup } from "react-icons/md";
 import PageLayout from "../../components/Layouts/PageLayout";
+import LoadingScreen from "../../components/LoadingScreen";
 import useAuthenticated from "../../hooks/useAuthenticated";
 import { api } from "../../utils/api";
 export default function EventsPage() {
@@ -11,22 +13,37 @@ export default function EventsPage() {
     const query = api.event.getAllIncludingAttendeesCount.useQuery(undefined, {
         enabled: status === "authenticated"
     });
+
+    if (query.isLoading) return <LoadingScreen />;
+
     return <>
         <PageLayout>
             <main className="my-14 px-2">
-                {query.isLoading ?
-                    <div className="p-10 pt-60 flex items-center justify-center h-full">
-                        <Loader color="gray" size="xl" />
-                    </div>
-                    :
-                    (
-                        query.data ? query.data.map((el, index) => <Link href={`/events/${el.id}`} key={index}>
-                            <EventCard event={el} />
-                        </Link>) :
-                            <h1 className="p-10 text-center text-gray-500 font-medium">
-                                You have no events to manage. Press the button down to create one.
-                            </h1>
-                    )
+                {query.data ? query.data.map((el, index) => <Link href={`/events/${el.id}`} key={index}>
+                    <Paper shadow="md" radius="md" p="lg" my="sm">
+                        <Flex justify="space-between">
+                            <div>
+                                <Text>{el.title}</Text>
+                                <Group spacing="lg">
+                                    <Group spacing={6} mt={4}>
+                                        <MdCalendarToday style={{ color: "#868e96" }} />
+                                        <Text size="sm" color="dimmed">{el.date.toLocaleDateString()}</Text>
+                                    </Group>
+                                    <Group spacing={6} mt={4}>
+                                        <MdGroup style={{ color: "#868e96" }} />
+                                        <Text size="sm" color="dimmed">{el._count.attendees.toString()}</Text>
+                                    </Group>
+                                </Group>
+                            </div>
+                            <Center>
+                                <HiOutlineArrowRight />
+                            </Center>
+                        </Flex>
+                    </Paper >
+                </Link>) :
+                    <h1 className="p-10 text-center text-gray-500 font-medium">
+                        You have no events to manage. Press the button down to create one.
+                    </h1>
                 }
             </main>
             <div className="w-full fixed z-10 inset-x-0 bottom-1 group">

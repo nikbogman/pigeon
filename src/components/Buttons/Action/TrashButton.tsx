@@ -7,7 +7,7 @@ const TrashButton: React.FC<{
 }> = ({ onClick, size }) => {
     return <ActionIcon
         color="red"
-        variant="subtle"
+        variant="light"
         onClick={onClick}
         size={size}
     >
