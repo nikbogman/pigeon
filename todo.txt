@@ -6,9 +6,13 @@ TODO:
     -> general
         [x] pass refetch function as tan-query context
         [x] refetch on mutation
-        [] add validation to input
 -> general
     -> replace tailwind with plain mantine
+    -> add validations and error handing in forms
+        -> [] event
+        -> [] contact
+
+    -> deploy to vercel and use planetscale instead of railway
 
 docker build -t ct3a-docker --build-arg NEXTAUTH_URL = http://localhost:3000 --build-arg NEXTAUTH_SECRET = DJb0bk4l4JM7neGfhaeWgq7MT5C4Cf2SJH0qNiFauhc= --build-arg GOOGLE_CLIENT_ID = 881328414445-84g17ushbgj8b3hha3j9b4qdkvk5m332.apps.googleusercontent.com --build-arg GOOGLE_CLIENT_SECRET = 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 --build-arg DATABASE_URL = mysql://root:FKXDIUH7Q29kS4UN9han@containers-us-west-57.railway.app:7410/railway --build-arg NODE_ENV = production --build-arg NEXT_PUBLIC_CLIENTVAR = clientvar .
 docker run -p 3000:3000 -e DATABASE_URL="mysql://root:FKXDIUH7Q29kS4UN9han@containers-us-west-57.railway.app:7410/railway" ct3a-docker

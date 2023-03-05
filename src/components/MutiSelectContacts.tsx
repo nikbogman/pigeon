@@ -4,10 +4,12 @@ import SelectContact from "./Cards/MultiSelectContactCard";
 type Props = {
     data: readonly (string | SelectItem)[];
     value: string[];
-    onChange: (value: string[]) => void
+    onChange: (value: string[]) => void;
+    error?: React.ReactNode
 }
 
 const MultiSelectContacts: React.FC<Props> = (props) => <MultiSelect
+    error={props.error}
     data={props.data}
     value={props.value}
     onChange={props.onChange}
@@ -15,7 +17,7 @@ const MultiSelectContacts: React.FC<Props> = (props) => <MultiSelect
     size="md"
     label="Your attendees"
     withAsterisk
-    placeholder="Pick all that you would like to invite"
+    placeholder="Pick the ones invited"
     itemComponent={SelectContact}
     searchable
     nothingFound="Nobody found"

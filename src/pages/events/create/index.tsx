@@ -3,10 +3,21 @@ import { Button, TextInput, Textarea, Alert, Loader, Center, } from "@mantine/co
 import useAuthenticated from "../../../hooks/useAuthenticated";
 import { DateTimePicker } from "@mantine/dates";
 import { FaArrowLeft, FaExclamationCircle } from "react-icons/fa";
-import { useState } from "react";
 import MultiSelectContacts from "../../../components/MutiSelectContacts";
-import { useForm } from "@mantine/form";
+import { useForm, zodResolver } from "@mantine/form";
+import { useRouter } from "next/router";
+import { z } from 'zod';
 
+const schema = z.object({
+    title: z.string()
+        .min(2, { message: 'Name should have at least 2 letters' })
+        .max(20, { message: 'Name should have maximum 20 letters' }),
+    description: z.string()
+        .min(8, { message: 'Description should have at least 2 letters' }),
+    date: z.date()
+        .min(new Date(), { message: 'Date should be after today' }),
+    attendeeIds: z.string().array().nonempty({ message: 'At least one attendee has to be added' })
+});
 type FormValues = {
     title: string;
     description: string;
@@ -16,15 +27,15 @@ type FormValues = {
 
 export default function CreateEventPage() {
     const { status } = useAuthenticated();
-
+    const router = useRouter()
     const contactQuery = api.contact.getAll.useQuery(undefined, {
         enabled: status === "authenticated"
     });
 
     const mutation = api.event.create.useMutation();
-    const [value, setValue] = useState<Date | null>(null);
 
     const form = useForm({
+        validate: zodResolver(schema),
         initialValues: {
             title: "",
             description: "",
@@ -33,15 +44,18 @@ export default function CreateEventPage() {
         } as FormValues
     });
     const onSubmit = form.onSubmit(async (data) => {
-        console.log(data)
+        const { attendeeIds, date, ...mutationVariables } = data;
+        const attendees: { name: string, email: string }[] = contactQuery.data!
+            .filter(contact => attendeeIds.includes(contact.id))
+        await mutation.mutateAsync({ attendees, date: date!, ...mutationVariables })
+        await router.push('/events')
     })
 
     const ContactInput = () => {
         if (contactQuery.data)
             return <MultiSelectContacts
+                {...form.getInputProps('attendeeIds')}
                 data={contactQuery.data.map(c => ({ value: c.id, description: c.email, label: c.name }))}
-                value={form.values.attendeeIds}
-                onChange={value => form.setFieldValue('attendeeIds', value as never[])}
             />
         return <Alert icon={<FaExclamationCircle size="1rem" />} title="Bummer!" color="red">
             You have contacts to add as attendees. You need to go back and add some.
@@ -54,55 +68,50 @@ export default function CreateEventPage() {
         </Alert>
     }
 
-
     return <>
-        <form onSubmit={onSubmit}>
-            <TextInput
-                label="Title"
-                placeholder="My 10th birthday"
-                required={true}
-                size="md"
-                withAsterisk
-                {...form.getInputProps('title')}
-            />
-            <Textarea
-                label="Description"
-                placeholder="I would like to invite you to..."
-                required={true}
-                size="md"
-                withAsterisk
-                my="xl"
-                minRows={4}
-                {...form.getInputProps('description')}
-            />
-            <DateTimePicker
-                timeInputProps={{ 'aria-label': 'Pick time' }}
-                my="xl"
-                size="md"
-                dropdownType="modal"
-                label="Pick date"
-                placeholder="Pick date"
-                withAsterisk
-                value={form.values.date}
-                onChange={value => {
-                    form.setFieldValue('date', new Date(value!.toISOString()))
-                }}
-            />
-
-            {contactQuery.status === "loading" ? <Center
-                my="xl"
-                mx="auto"
-                h={50}
-            >
-                <Loader color="gray" />
-            </Center> : <ContactInput />}
-            <Button
-                type="submit"
-                fullWidth
-                variant="outline"
-                color="dark"
-            >Submit</Button>
-        </form>
+        <main style={{ paddingInline: 8, marginTop: 56 }}>
+            <form onSubmit={onSubmit}>
+                <TextInput
+                    label="Title"
+                    placeholder="My 10th birthday"
+                    size="md"
+                    withAsterisk
+                    {...form.getInputProps('title')}
+                />
+                <Textarea
+                    label="Description"
+                    placeholder="I would like to invite you to..."
+                    size="md"
+                    withAsterisk
+                    my="xl"
+                    minRows={4}
+                    {...form.getInputProps('description')}
+                />
+                <DateTimePicker
+                    timeInputProps={{ 'aria-label': 'Pick time' }}
+                    my="xl"
+                    size="md"
+                    dropdownType="modal"
+                    label="Pick date"
+                    placeholder="Pick date"
+                    withAsterisk
+                    {...form.getInputProps('date')}
+                />
+                {contactQuery.isLoading ? <Center
+                    my="xl"
+                    mx="auto"
+                    h={50}
+                >
+                    <Loader color="gray" />
+                </Center> : <ContactInput />}
+                <Button
+                    type="submit"
+                    fullWidth
+                    variant="outline"
+                    color="dark"
+                >Create</Button>
+            </form>
+        </main>
     </>
 }
 
