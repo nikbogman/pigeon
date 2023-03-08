@@ -1,4 +1,4 @@
-import { Paper, Flex, Group, Avatar, Text } from "@mantine/core";
+import { Paper, Flex, Group, Avatar, Text, Title, Box } from "@mantine/core";
 import { Contact } from "@prisma/client";
 import EditContactModal from "../Modals/Contact/EditContactModal";
 import RemoveContactModal from "../Modals/Contact/RemoveContactModal";
@@ -9,10 +9,10 @@ const ContactCard: React.FC<{
     <Flex justify="space-between">
         <Group>
             <Avatar size={50} color="blue" />
-            <div>
-                <Text>{contact.name}</Text>
-                <Text size="xs" color="dimmed">{contact.email}</Text>
-            </div>
+            <Box>
+                <Text fw={500}>{contact.name}</Text>
+                <Text color="dimmed" >{contact.email}</Text>
+            </Box>
         </Group>
         <Group spacing="xs">
             <EditContactModal contact={contact} />

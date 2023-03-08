@@ -77,14 +77,12 @@ export default function CreateEventPage() {
                 <TextInput
                     label="Title"
                     placeholder="My 10th birthday"
-                    size="md"
                     withAsterisk
                     {...form.getInputProps('title')}
                 />
                 <Textarea
                     label="Description"
                     placeholder="I would like to invite you to..."
-                    size="md"
                     withAsterisk
                     my="xl"
                     minRows={4}
@@ -93,7 +91,6 @@ export default function CreateEventPage() {
                 <DateTimePicker
                     timeInputProps={{ 'aria-label': 'Pick time' }}
                     my="xl"
-                    size="md"
                     dropdownType="modal"
                     label="Pick date"
                     placeholder="Pick date"

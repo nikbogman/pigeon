@@ -13,7 +13,7 @@ const SelectContact = React.forwardRef<HTMLDivElement, ItemProps>(
             <Group noWrap>
                 <Avatar color="blue" />
                 <div>
-                    <Text>{label}</Text>
+                    <Text fz={500}>{label}</Text>
                     <Text size="xs" color="dimmed">
                         {description}
                     </Text>

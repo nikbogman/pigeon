@@ -7,6 +7,8 @@ import PageLayout from "../../components/Layouts/PageLayout";
 import LoadingScreen from "../../components/LoadingScreen";
 import useAuthenticated from "../../hooks/useAuthenticated";
 import { api } from "../../utils/api";
+
+// add turnecate to text!!!!
 export default function EventsPage() {
     const { status } = useAuthenticated();
 

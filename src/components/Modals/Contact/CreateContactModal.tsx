@@ -1,5 +1,5 @@
 import { FaPlus } from "react-icons/fa";
-import { Modal, Button, TextInput } from "@mantine/core";
+import { Modal, Button, TextInput, Title } from "@mantine/core";
 import { useForm } from '@mantine/form';
 import { api } from "../../../utils/api";
 import useToggle from "../../../hooks/useToggle";
@@ -36,7 +36,7 @@ const CreateContactModal: React.FC = () => {
         <Modal
             centered
             opened={isToggled}
-            title={<h2>Add person to contacts</h2>}
+            title={<Title order={3}>Add person to contacts</Title>}
             onClose={toggle}
         >
             <form onSubmit={onSubmit}>
@@ -44,7 +44,6 @@ const CreateContactModal: React.FC = () => {
                     label="Name"
                     placeholder="John Doe"
                     required={true}
-                    size="lg"
                     withAsterisk
                     {...form.getInputProps('name')}
                 />
@@ -52,13 +51,11 @@ const CreateContactModal: React.FC = () => {
                     label="Email"
                     placeholder="johndoe@mail.com"
                     required={true}
-                    size="lg"
                     withAsterisk
                     my="xl"
                     {...form.getInputProps('email')}
                 />
                 <Button
-                    size="lg"
                     type="submit"
                     fullWidth
                     variant="outline"

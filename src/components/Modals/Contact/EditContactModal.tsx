@@ -1,4 +1,4 @@
-import { Modal, TextInput, Button, Group } from "@mantine/core";
+import { Modal, TextInput, Button, Group, Title } from "@mantine/core";
 import useToggle from "../../../hooks/useToggle";
 import { useForm } from "@mantine/form";
 import { api } from "../../../utils/api";
@@ -32,7 +32,7 @@ const EditContactModal: React.FC<Props> = (props) => {
         <Modal
             centered
             opened={isToggled}
-            title={<h2>Edit person to contacts</h2>}
+            title={<Title order={3}>Edit person to contacts</Title>}
             onClose={toggle}
         >
             <form onSubmit={onSubmit}>
@@ -40,7 +40,6 @@ const EditContactModal: React.FC<Props> = (props) => {
                     label="Name"
                     placeholder={props.contact.name}
                     required={true}
-                    size="lg"
                     withAsterisk
                     {...form.getInputProps('name')}
                 />
@@ -48,14 +47,12 @@ const EditContactModal: React.FC<Props> = (props) => {
                     label="Email"
                     placeholder={props.contact.email}
                     required={true}
-                    size="lg"
                     withAsterisk
                     my="xl"
                     {...form.getInputProps('email')}
                 />
                 <Group grow>
                     <Button
-                        size="lg"
                         type="submit"
                         fullWidth
                         variant="outline"
@@ -65,7 +62,6 @@ const EditContactModal: React.FC<Props> = (props) => {
                         Edit
                     </Button>
                     <Button
-                        size="lg"
                         fullWidth
                         variant="default"
                         onClick={() => {
