@@ -1,6 +1,6 @@
 import { createProxySSGHelpers } from '@trpc/react-query/ssg';
 import superjson from 'superjson';
-import { appRouter } from '../server/api/root';
+import { appRouter } from '../server/api/root.router';
 import { createInnerTRPCContext } from '../server/api/trpc';
 export default createProxySSGHelpers({
     router: appRouter,

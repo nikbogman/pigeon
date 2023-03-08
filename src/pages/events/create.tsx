@@ -1,9 +1,9 @@
-import { api } from "../../../utils/api";
+import { api } from "../../utils/api";
 import { Button, TextInput, Textarea, Alert, Loader, Center, } from "@mantine/core";
-import useAuthenticated from "../../../hooks/useAuthenticated";
+import useAuthenticated from "../../hooks/useAuthenticated";
 import { DateTimePicker } from "@mantine/dates";
 import { FaArrowLeft, FaExclamationCircle } from "react-icons/fa";
-import MultiSelectContacts from "../../../components/MutiSelectContacts";
+import MultiSelectContacts from "../../components/MutiSelectContacts";
 import { useForm, zodResolver } from "@mantine/form";
 import { useRouter } from "next/router";
 import { z } from 'zod';
@@ -24,6 +24,8 @@ type FormValues = {
     attendeeIds: string[];
     date: Date | undefined
 }
+
+// change to modal
 
 export default function CreateEventPage() {
     const { status } = useAuthenticated();

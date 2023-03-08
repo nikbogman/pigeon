@@ -1,24 +1,7 @@
-import { type NextPage } from "next";
-import Head from "next/head";
-import Link from "next/link";
-export function getServerSideProps() {
-  return {
-    redirect: {
-      destination: '/invitations',
-      permanent: false,
-    }
-  }
-}
-
 export default function HomePage() {
   return (
     <>
-      <Head>
-        <title>Pigeon Home</title>
-      </Head>
-      <Link href='/invitations'>
-        <Button>Click</Button>
-      </Link>
+      <h1>Ooops, not implemented</h1>
     </>
   );
 };

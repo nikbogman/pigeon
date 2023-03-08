@@ -1,11 +1,10 @@
-import PageLayout from "../../components/Layouts/PageLayout";
-import { api } from "../../utils/api";
-import ContactCard from "../../components/Cards/ContactCard";
-import useAuthenticated from "../../hooks/useAuthenticated";
-import CreateContactModal from "../../components/Modals/Contact/Create";
-import ContactModalContextProvider from "../../providers/ContactModalContextProvider";
-import { Loader } from "@mantine/core";
-import LoadingScreen from "../../components/LoadingScreen";
+import PageLayout from "../components/Layouts/PageLayout";
+import { api } from "../utils/api";
+import ContactCard from "../components/Cards/ContactCard";
+import useAuthenticated from "../hooks/useAuthenticated";
+import CreateContactModal from "../components/Modals/Contact/CreateContactModal";
+import { TRPCRefetchContextProvider } from "../context/TRPCRefetchContext";
+import LoadingScreen from "../components/LoadingScreen";
 
 export default function ContactsPage() {
     const { status } = useAuthenticated();
@@ -18,7 +17,7 @@ export default function ContactsPage() {
 
     return <>
         <PageLayout>
-            <ContactModalContextProvider refetch={query.refetch}>
+            <TRPCRefetchContextProvider refetch={query.refetch}>
                 <main className="my-12 px-2 pt-0.5">
                     {query.data ? query.data.map((contact, index) => {
                         return <ContactCard
@@ -31,7 +30,7 @@ export default function ContactsPage() {
                     }
                 </main>
                 <CreateContactModal />
-            </ContactModalContextProvider>
+            </TRPCRefetchContextProvider>
         </PageLayout>
     </>
 }

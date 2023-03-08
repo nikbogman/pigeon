@@ -4,8 +4,7 @@ import { useForm } from "@mantine/form";
 import { api } from "../../../utils/api";
 import EditButton from "../../Buttons/Action/EditButton";
 import { Contact } from "@prisma/client";
-import { useContext } from "react";
-import ContactModalContext from "../../../context/ContactModalContext";
+import { useContextValue } from "../../../context/TRPCRefetchContext";
 
 type Data = {
     name: string;
@@ -16,7 +15,7 @@ type Props = {
 }
 
 const EditContactModal: React.FC<Props> = (props) => {
-    const { refetch } = useContext(ContactModalContext);
+    const { refetch } = useContextValue();
     const mutation = api.contact.updateById.useMutation({
         onSuccess: async () => refetch().then(toggle).then(form.reset),
     });

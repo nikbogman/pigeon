@@ -4,12 +4,12 @@ import useToggle from "../../../hooks/useToggle";
 import { FaExclamationCircle } from "react-icons/fa";
 import { api } from "../../../utils/api";
 import { useContext } from "react";
-import ContactModalContext from "../../../context/ContactModalContext";
+import { useContextValue } from "../../../context/TRPCRefetchContext";
 
 const RemoveContactModal: React.FC<{
     id: string,
 }> = (props) => {
-    const { refetch } = useContext(ContactModalContext);
+    const { refetch } = useContextValue();
 
     const [isToggled, toggle]: [boolean, () => void] = useToggle();
     const mutation = api.contact.removeById.useMutation({

@@ -8,7 +8,7 @@ const style = {
     alignItems: 'center'
 };
 
-const LoadingScreen = () => <div
+const LoadingScreen: React.FC = () => <div
     style={style}>
     <Loader color="gray" size="xl" />
 </div >

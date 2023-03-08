@@ -71,6 +71,8 @@ model Event {
     date        DateTime
     attendees   Attendee[]
     createdAt   DateTime   @default(now())
+
+    //@@unique([userId, title])
 }
 
 enum Status {

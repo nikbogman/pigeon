@@ -3,15 +3,14 @@ import { Modal, Button, TextInput } from "@mantine/core";
 import { useForm } from '@mantine/form';
 import { api } from "../../../utils/api";
 import useToggle from "../../../hooks/useToggle";
-import { useContext } from "react";
-import ContactModalContext from "../../../context/ContactModalContext";
+import { useContextValue } from "../../../context/TRPCRefetchContext";
 type Data = {
     name: string;
     email: string;
 }
 
 const CreateContactModal: React.FC = () => {
-    const { refetch } = useContext(ContactModalContext)
+    const { refetch } = useContextValue();
     const mutation = api.contact.add.useMutation({
         onSuccess: async () => refetch().then(toggle).then(form.reset)
     });

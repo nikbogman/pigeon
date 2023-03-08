@@ -1,7 +1,7 @@
 import { createTRPCRouter } from "./trpc";
-import { eventRouter } from "./routers/event";
-import { attendeeRouter } from "./routers/attendee";
-import { contactRouter } from "./routers/contact";
+import { eventRouter } from "./routers/event.router";
+import { attendeeRouter } from "./routers/attendee.router";
+import { contactRouter } from "./routers/contact.router";
 
 export const appRouter = createTRPCRouter({
   event: eventRouter,

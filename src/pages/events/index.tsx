@@ -1,4 +1,4 @@
-import { Center, Group, Text, Paper, Flex } from "@mantine/core";
+import { Center, Group, Text, Paper, Flex, Title } from "@mantine/core";
 import Link from "next/link";
 import { FaPlus } from "react-icons/fa";
 import { HiOutlineArrowRight } from "react-icons/hi";
@@ -23,15 +23,15 @@ export default function EventsPage() {
                     <Paper shadow="md" radius="md" p="lg" my="sm">
                         <Flex justify="space-between">
                             <div>
-                                <Text>{el.title}</Text>
+                                <Title order={3}>{el.title}</Title>
                                 <Group spacing="lg">
                                     <Group spacing={6} mt={4}>
                                         <MdCalendarToday style={{ color: "#868e96" }} />
-                                        <Text size="sm" color="dimmed">{el.date.toLocaleDateString()}</Text>
+                                        <Text color="dimmed">{el.date.toLocaleDateString()}</Text>
                                     </Group>
                                     <Group spacing={6} mt={4}>
                                         <MdGroup style={{ color: "#868e96" }} />
-                                        <Text size="sm" color="dimmed">{el._count.attendees.toString()}</Text>
+                                        <Text color="dimmed">{el._count.attendees.toString()}</Text>
                                     </Group>
                                 </Group>
                             </div>
