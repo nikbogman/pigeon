@@ -4,18 +4,15 @@ import useAuthenticated from "../../hooks/useAuthenticated";
 import { api } from "../../utils/api";
 import Error from "next/error";
 import LoadingScreen from "../../components/LoadingScreen";
-import { Paper, Flex, Group, Center, Text, Table, Title, Chip, Container, Input, TextInput, Button } from "@mantine/core";
+import { Flex, Group, Center, Text, Table, Chip, Container, TextInput, Button } from "@mantine/core";
 import { MdCalendarToday, MdGroup, MdSearch } from "react-icons/md";
 import TrashButton from "../../components/Buttons/Action/TrashButton";
 import StatusBadge from "../../components/StatusBadge";
 import { Status } from "@prisma/client";
 import { useState } from "react";
-
 import { RxCross2 } from "react-icons/rx"
 import EditButton from "../../components/Buttons/Action/EditButton";
-// make QR code not unique for attendee but for event
-// add remove attendee
-// add edit attendees
+import EventCard from "../../components/Cards/EventCard";
 
 export default function EventPage() {
     const { status } = useAuthenticated();
@@ -29,7 +26,6 @@ export default function EventPage() {
         retry: false
     });
 
-
     // extract to hook
     if (query.isError && query.error) return <Error
         statusCode={query.error.data?.httpStatus || 505}
@@ -38,38 +34,28 @@ export default function EventPage() {
 
     const attendees = (() => {
         if (!query.data) return [];
-        if (filterName) {
-            if (filter === 'ALL')
-                return query.data.attendees.filter(a => a.name.includes(filterName));
-            return query.data.attendees.filter(a => a.status === filter && a.name.includes(filterName))
-        }
-        if (filter === 'ALL')
-            return query.data.attendees;
-        return query.data.attendees.filter(a => a.status === filter)
+        const filtered = filter !== 'ALL' ? query.data.attendees.filter(a => a.status === filter) : query.data.attendees;
+        return filterName ? filtered.filter(a => a.name.includes(filterName)) : filtered;
     })()
 
     if (query.isLoading) return <LoadingScreen />;
 
-
     return <>
         <PageLayout>
-            <main className="my-14 px-2">
+            <main>
                 {query.data && <>
-                    <Paper shadow="md" radius="md" p="lg" my="sm" >
-                        <Flex justify="space-between">
-                            <div>
-                                <Title order={3}>{query.data.title}</Title>
-                                <Group spacing={6} mt={4}>
-                                    <MdCalendarToday style={{ color: "#868e96" }} />
-                                    <Text color="dimmed">{query.data.date.toLocaleDateString()}</Text>
-                                </Group>
-                            </div>
-                            <Center>
-                                <TrashButton size={50} />
-                            </Center>
-                        </Flex>
+                    <EventCard>
+                        <EventCard.Heading
+                            title={query.data.title}
+                            rightButton={<TrashButton size={50} />}
+                        >
+                            <EventCard.SubHeading
+                                icon={MdCalendarToday}
+                                label={query.data.date.toLocaleDateString()}
+                            />
+                        </EventCard.Heading>
                         <Text mt="md">{query.data.description}</Text>
-                    </Paper >
+                    </EventCard>
                     <Container my="lg">
                         <Flex my="md" justify="space-between">
                             <Group spacing={12}>
@@ -113,7 +99,6 @@ export default function EventPage() {
                             placeholder="Search for attendee"
                         />
                     </Container>
-                    {/* edit */}
                     <Container>
                         <Table>
                             <thead>

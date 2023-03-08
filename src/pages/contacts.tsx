@@ -5,10 +5,11 @@ import useAuthenticated from "../hooks/useAuthenticated";
 import CreateContactModal from "../components/Modals/Contact/CreateContactModal";
 import { TRPCRefetchContextProvider } from "../context/TRPCRefetchContext";
 import LoadingScreen from "../components/LoadingScreen";
+import { SimpleGrid } from "@mantine/core";
+import { Contact } from "@prisma/client";
 
 export default function ContactsPage() {
     const { status } = useAuthenticated();
-
     const query = api.contact.getAll.useQuery(undefined, {
         enabled: status === "authenticated"
     });
@@ -18,19 +19,19 @@ export default function ContactsPage() {
     return <>
         <PageLayout>
             <TRPCRefetchContextProvider refetch={query.refetch}>
-                <main className="my-12 px-2 pt-0.5">
-                    {query.data ? query.data.map((contact, index) => {
-                        return <ContactCard
-                            contact={contact}
-                            key={index} />
-                    }) :
+                <main>
+                    {query.data ? <ContactCards contacts={query.data} /> :
                         <h1 className="p-10 text-center text-gray-500 font-medium">
                             You have no contacts. Press the button down to add someone.
-                        </h1>
-                    }
+                        </h1>}
                 </main>
                 <CreateContactModal />
             </TRPCRefetchContextProvider>
         </PageLayout>
     </>
 }
+
+
+const ContactCards: React.FC<{ contacts: Contact[] }> = ({ contacts }) => <SimpleGrid cols={1}>
+    {contacts.map((contact, index) => <ContactCard contact={contact} key={index} />)}
+</SimpleGrid>

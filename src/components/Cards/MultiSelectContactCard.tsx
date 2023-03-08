@@ -8,19 +8,17 @@ interface ItemProps extends React.ComponentPropsWithoutRef<'div'> {
 }
 
 const SelectContact = React.forwardRef<HTMLDivElement, ItemProps>(
-    ({ label, description, ...others }: ItemProps, ref) => (
-        <div ref={ref} {...others}>
-            <Group noWrap>
-                <Avatar color="blue" />
-                <div>
-                    <Text fz={500}>{label}</Text>
-                    <Text size="xs" color="dimmed">
-                        {description}
-                    </Text>
-                </div>
-            </Group>
-        </div>
-    )
+    ({ label, description, ...others }: ItemProps, ref) => <div ref={ref} {...others}>
+        <Group noWrap>
+            <Avatar color="blue" />
+            <div>
+                <Text fw={500}>{label}</Text>
+                <Text size="xs" color="dimmed">
+                    {description}
+                </Text>
+            </div>
+        </Group>
+    </div>
 );
 
 export default SelectContact;

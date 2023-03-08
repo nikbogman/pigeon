@@ -1,1 +1,1 @@
-export default {}
+export default function useRedirectError(isError: boolean) { }

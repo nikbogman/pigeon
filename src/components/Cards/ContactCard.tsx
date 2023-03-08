@@ -5,7 +5,7 @@ import RemoveContactModal from "../Modals/Contact/RemoveContactModal";
 
 const ContactCard: React.FC<{
     contact: Contact;
-}> = ({ contact }) => <Paper shadow="md" radius="md" p="sm" my="sm">
+}> = ({ contact }) => <Paper shadow="md" radius="md" p="sm">
     <Flex justify="space-between">
         <Group>
             <Avatar size={50} color="blue" />

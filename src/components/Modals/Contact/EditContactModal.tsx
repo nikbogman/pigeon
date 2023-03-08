@@ -23,7 +23,6 @@ const EditContactModal: React.FC<Props> = (props) => {
     const [isToggled, toggle]: [boolean, () => void] = useToggle();
     const form = useForm({
         initialValues: { name: "", email: "" } satisfies Data,
-
     });
     const onSubmit = form.onSubmit(data => mutation.mutate({ id: props.contact.id, update: data }));
 

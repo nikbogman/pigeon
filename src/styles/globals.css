@@ -2,29 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* @layer base {
-    * {
-        @apply text-[calc(10px+1vmin)];
-    }
-
-    @media (max-width: 640px) {
-        * {
-            @apply text-[calc(10px+2vmin)];
-        }
-    }
-
-    h1 {
-        @apply text-2xl;
-        @apply font-semibold;
-    }
-
-    h2 {
-        @apply text-xl;
-        @apply font-semibold;
-    }
-
-    h3 {
-        @apply text-lg;
-        @apply font-semibold;
-    }
-} */
+main {
+    margin-block: 3.5rem;
+    padding-inline: 0.5rem;
+    padding-top: 0.125rem;
+}
