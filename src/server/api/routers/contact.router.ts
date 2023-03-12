@@ -1,5 +1,8 @@
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
+
 export const contactRouter = createTRPCRouter({
     add: protectedProcedure
         .input(
@@ -8,15 +11,26 @@ export const contactRouter = createTRPCRouter({
                 email: z.string()
             })
         ).mutation(
-            async ({ input, ctx }) => ctx.prisma.contact.create({
-                data: {
-                    userId: ctx.session.user.id,
-                    email: input.email,
-                    name: input.name
+            async ({ input, ctx }) => {
+                try {
+                    const record = await ctx.prisma.contact.create({
+                        data: {
+                            userId: ctx.session.user.id,
+                            email: input.email,
+                            name: input.name
+                        }
+                    })
+                    return record;
+                } catch (err) {
+                    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+                        if (err.code === 'P2002') throw new TRPCError({
+                            code: "BAD_REQUEST",
+                            message: err.message,
+                        });
+                    }
                 }
-            })
+            }
         ),
-
     updateById: protectedProcedure
         .input(
             z.object({
@@ -27,10 +41,22 @@ export const contactRouter = createTRPCRouter({
                 })
             })
         ).mutation(
-            async ({ input, ctx }) => ctx.prisma.contact.update({
-                where: { id: input.id },
-                data: { ...input.update }
-            })
+            async ({ input, ctx }) => {
+                try {
+                    const record = await ctx.prisma.contact.update({
+                        where: { id: input.id },
+                        data: { ...input.update }
+                    });
+                    return record;
+                } catch (err) {
+                    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+                        if (err.code === 'P2002') throw new TRPCError({
+                            code: "BAD_REQUEST",
+                            message: err.message,
+                        });
+                    }
+                }
+            }
         ),
 
     removeById: protectedProcedure

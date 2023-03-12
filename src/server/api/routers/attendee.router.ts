@@ -1,3 +1,5 @@
+import { Prisma } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
@@ -19,38 +21,46 @@ export const attendeeRouter = createTRPCRouter({
     getByIdIncludingEvent: publicProcedure
         .input(z.string())
         .query(
-            async ({ input, ctx }) => ctx.prisma.attendee.findFirstOrThrow({
-                where: { id: input },
-                include: { event: true }
-            })
+            async ({ input, ctx }) => {
+                try {
+                    const record = await ctx.prisma.attendee.findFirstOrThrow({
+                        where: { id: input },
+                        include: { event: true }
+                    });
+                    return record;
+                } catch (err) {
+                    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+                        if (err.code === 'P2025') throw new TRPCError({
+                            code: 'NOT_FOUND',
+                            message: err.message,
+                        });
+                    }
+                }
+            }
         ),
 
-    addContactAsAttendee: protectedProcedure
+    add: protectedProcedure
         .input(
             z.object({
                 contactId: z.string(),
                 eventId: z.string()
             })
         ).mutation(
-            async ({ input, ctx }) => {
-                const contact = await ctx.prisma.contact.findUniqueOrThrow({
-                    where: { id: input.contactId }
-                })
-                return ctx.prisma.attendee.create({
-                    data: {
-                        eventId: input.eventId,
-                        email: contact.email,
-                        name: contact.name
-                    }
-                })
-            }
+            async ({ input, ctx }) => ctx.prisma.attendee.create({
+                data: input
+            })
         ),
 
-    removeAttendeeById: protectedProcedure
-        .input(z.string())
+    remove: protectedProcedure
+        .input(
+            z.object({
+                contactId: z.string(),
+                eventId: z.string()
+            })
+        )
         .mutation(
             async ({ input, ctx }) => ctx.prisma.attendee.delete({
-                where: { id: input }
+                where: { contactId_eventId: input }
             })
         )
 });

@@ -1,23 +1,25 @@
-import { Flex, Modal, Group, Button, Text } from "@mantine/core";
+import { Modal, Flex, Group, Button, Text } from "@mantine/core";
 import { useToggle } from "@mantine/hooks";
 import { FaExclamationCircle } from "react-icons/fa";
 import { useContextValue } from "../../../context/TRPCRefetchContext";
 import { api } from "../../../utils/api";
 import TrashButton from "../../Buttons/Action/TrashButton";
 
-const RemoveAttendeesModal: React.FC<{ id: string }> = props => {
+const RemoveEventModal: React.FC<{
+    id: string,
+}> = props => {
     const { refetch } = useContextValue();
     const [isToggled, toggle] = useToggle();
-    const mutation = api.attendee.removeAttendeeById.useMutation({
+    const mutation = api.event.removeById.useMutation({
         onSuccess: async () => refetch().then(() => toggle()),
     });
 
     return <>
-        <Flex justify="end"><TrashButton size={35} onClick={() => toggle()} /></Flex>
+        <TrashButton size={35} onClick={() => toggle()} />
         <Modal
             centered
             opened={isToggled}
-            onClose={() => toggle()}
+            onClose={toggle}
         >
             <Flex
                 gap="md"
@@ -28,10 +30,9 @@ const RemoveAttendeesModal: React.FC<{ id: string }> = props => {
             >
                 <FaExclamationCircle className="mx-auto h-14 w-14 text-gray-400 " />
                 <Text fz="lg" c="gray" ta="center">
-                    Are you sure you want to remove this attendee?
+                    Are you sure you want to remove this event?
                 </Text >
             </Flex>
-
             <Group grow spacing="xs" mt="xl">
                 <Button
                     loading={mutation.isLoading}
@@ -48,4 +49,4 @@ const RemoveAttendeesModal: React.FC<{ id: string }> = props => {
     </>
 }
 
-export default RemoveAttendeesModal;
+export default RemoveEventModal;

@@ -1,18 +1,19 @@
 import { FaPlus } from "react-icons/fa";
-import { Modal, Button, TextInput, Title } from "@mantine/core";
+import { Modal, Button, TextInput, Title, Alert, SimpleGrid } from "@mantine/core";
 import { useForm, zodResolver } from '@mantine/form';
 import { api } from "../../../utils/api";
-// import useToggle from "../../../hooks/useToggle";
 import { useContextValue } from "../../../context/TRPCRefetchContext";
 import { z } from "zod";
 import { useToggle } from "@mantine/hooks";
+import AlertError from "../../Alerts/AlertError";
 
 const CreateContactModal: React.FC = () => {
     const { refetch } = useContextValue();
     const [isToggled, toggle] = useToggle();
 
     const mutation = api.contact.add.useMutation({
-        onSuccess: async () => refetch().then(() => toggle()).then(form.reset)
+        onSuccess: async () => refetch().then(() => toggle()).then(form.reset),
+        retry: false,
     });
 
     const form = useForm({
@@ -55,30 +56,32 @@ const CreateContactModal: React.FC = () => {
             onClose={handleClose}
         >
             <form onSubmit={handleSubmit}>
-                <TextInput
-                    label="Name"
-                    placeholder="John Doe"
-                    required={true}
-                    withAsterisk
-                    {...form.getInputProps('name')}
-                />
-                <TextInput
-                    label="Email"
-                    placeholder="johndoe@mail.com"
-                    required={true}
-                    withAsterisk
-                    my="xl"
-                    {...form.getInputProps('email')}
-                />
-                <Button
-                    type="submit"
-                    fullWidth
-                    variant="outline"
-                    color="dark"
-                    loading={mutation.isLoading}
-                >
-                    Add Contact
-                </Button>
+                <SimpleGrid>
+                    <TextInput
+                        label="Name"
+                        placeholder="John Doe"
+                        required={true}
+                        withAsterisk
+                        {...form.getInputProps('name')}
+                    />
+                    <TextInput
+                        label="Email"
+                        placeholder="johndoe@mail.com"
+                        required={true}
+                        withAsterisk
+                        {...form.getInputProps('email')}
+                    />
+                    <Button
+                        type="submit"
+                        fullWidth
+                        variant="outline"
+                        color="dark"
+                        loading={mutation.isLoading}
+                    >
+                        Add Contact
+                    </Button>
+                    {mutation.isError && <AlertError title="Oops!">{mutation.error.message}</AlertError>}
+                </SimpleGrid>
             </form>
         </Modal>
     </>

@@ -1,13 +1,14 @@
-import { Alert, Button, TextInput, Textarea, Center, Loader, Modal, Title, SimpleGrid, Group } from "@mantine/core";
+import { Button, TextInput, Textarea, Modal, Title, SimpleGrid, Group } from "@mantine/core";
 import { DateTimePicker } from "@mantine/dates";
 import { zodResolver, useForm } from "@mantine/form";
 import { useRouter } from "next/router";
-import { FaExclamationCircle, FaArrowLeft, FaPlus } from "react-icons/fa";
+import { FaArrowLeft, FaPlus } from "react-icons/fa";
 import { api } from "../../../utils/api";
 import MultiSelectContacts from "../../Inputs/MutiSelectContacts";
 import { z } from 'zod';
 import { useContextValue } from "../../../context/TRPCRefetchContext";
 import { useToggle } from "@mantine/hooks";
+import AlertError from "../../Alerts/AlertError";
 
 const CreateEventModal: React.FC = () => {
     const router = useRouter();
@@ -29,18 +30,18 @@ const CreateEventModal: React.FC = () => {
                     .min(8, { message: 'Description should have at least 8 letters' }),
                 date: z.date()
                     .min(new Date(), { message: 'Date should be after today' }),
-                attendeeIds: z.string().array().nonempty({ message: 'At least one attendee has to be added' })
+                contactIds: z.string().array().nonempty({ message: 'At least one attendee has to be added' })
             })
         ),
         initialValues: {
             title: "",
             description: "",
-            attendeeIds: [],
+            contactIds: [],
             date: undefined
         } as {
             title: string;
             description: string;
-            attendeeIds: string[];
+            contactIds: string[];
             date: Date | undefined
         }
     });
@@ -53,19 +54,19 @@ const CreateEventModal: React.FC = () => {
     // handle if query data globaly
 
     const handleSubmit = form.onSubmit(data => {
-        const { attendeeIds, date, ...mutationVariables } = data;
-        const attendees: { name: string, email: string }[] = query.data!
-            .filter(contact => attendeeIds.includes(contact.id))
+        const { contactIds, date, ...mutationVariables } = data;
+        const attendees: { name: string, email: string, contactId: string }[] = query.data!
+            .filter(contact => contactIds.includes(contact.id)).map(contact => ({ contactId: contact.id, ...contact }))
         return mutation.mutate({ attendees, date: date!, ...mutationVariables })
     })
 
     const ContactInput = () => {
         if (query.data && query.data.length > 0)
             return <MultiSelectContacts
-                {...form.getInputProps('attendeeIds')}
+                {...form.getInputProps('contactIds')}
                 data={query.data.map(c => ({ value: c.id, description: c.email, label: c.name }))}
             />
-        return <Alert icon={<FaExclamationCircle />} title="Bummer!" color="red">
+        return <AlertError title="Bummer!">
             You have contacts to add as attendees. You need to go back and add some.
             <Button
                 leftIcon={<FaArrowLeft />}
@@ -75,7 +76,7 @@ const CreateEventModal: React.FC = () => {
                 fullWidth
                 onClick={() => router.push('/contacts')}
             >Click here to do so</Button>
-        </Alert>
+        </AlertError>
     }
 
     return <>
@@ -126,6 +127,7 @@ const CreateEventModal: React.FC = () => {
                             type="submit"
                             variant="outline"
                             color="dark"
+                            disabled={!query.data || query.data.length <= 0}
                         >Create</Button>
                     </Group>
                 </SimpleGrid>

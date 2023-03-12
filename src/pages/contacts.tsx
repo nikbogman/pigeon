@@ -2,7 +2,7 @@ import PageLayout from "../components/Layouts/PageLayout";
 import { api } from "../utils/api";
 import ContactCard from "../components/Cards/ContactCard";
 import useAuthenticated from "../hooks/useAuthenticated";
-import CreateContactModal from "../components/Modals/Contact/CreateContactModal";
+import CreateContactModal from "../components/Modals/ContactModals/CreateContactModal";
 import { TRPCRefetchContextProvider } from "../context/TRPCRefetchContext";
 import LoadingScreen from "../components/LoadingScreen";
 import { SimpleGrid } from "@mantine/core";

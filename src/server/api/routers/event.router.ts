@@ -1,8 +1,6 @@
-import { Event, Attendee, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { env } from "../../../env/server.mjs";
-import generateQrCode from "../../../lib/generateQrCode";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const eventRouter = createTRPCRouter({
@@ -13,8 +11,7 @@ export const eventRouter = createTRPCRouter({
                 description: z.string().min(5),
                 date: z.date(),
                 attendees: z.object({
-                    name: z.string(),
-                    email: z.string()
+                    contactId: z.string()
                 }).array()
             })
         ).mutation(
@@ -33,19 +30,16 @@ export const eventRouter = createTRPCRouter({
 
     getAllIncludingAttendeesCount: protectedProcedure
         .query(
-            async ({ ctx }) => {
-                return ctx.prisma.event.findMany({
-                    where: { userId: ctx.session.user.id },
-                    include: {
-                        _count: {
-                            select: {
-                                attendees: true
-                            }
+            async ({ ctx }) => ctx.prisma.event.findMany({
+                where: { userId: ctx.session.user.id },
+                include: {
+                    _count: {
+                        select: {
+                            attendees: true
                         }
                     }
-                })
-
-            }
+                }
+            })
         ),
 
     getByIdIncludingAttendees: protectedProcedure
@@ -53,26 +47,17 @@ export const eventRouter = createTRPCRouter({
         .query(
             async ({ input, ctx }) => {
                 try {
-                    const event: Event & {
-                        attendees: Attendee[];
-                    } = await ctx.prisma.event.findUniqueOrThrow({
+                    const record = await ctx.prisma.event.findUniqueOrThrow({
                         where: { id: input },
                         include: {
-                            attendees: true,
+                            attendees: {
+                                include: {
+                                    contact: true
+                                }
+                            },
                         }
                     })
-                    const attendees: (Attendee & {
-                        dataUrl: string;
-                        url: string
-                    })[] = [];
-                    for (const attendee of event.attendees) {
-                        attendees.push({
-                            ...attendee,
-                            dataUrl: await generateQrCode(attendee.id),
-                            url: `${env.NEXTAUTH_URL}attendee/${attendee.id}`
-                        })
-                    }
-                    return { ...event, attendees }
+                    return record;
                 } catch (err) {
                     if (err instanceof Prisma.PrismaClientKnownRequestError) {
                         if (err.code === 'P2025') throw new TRPCError({
@@ -80,10 +65,6 @@ export const eventRouter = createTRPCRouter({
                             message: err.message,
                         });
                     }
-                    throw new TRPCError({
-                        code: 'INTERNAL_SERVER_ERROR',
-                        message: 'Something went wrong',
-                    });
                 }
             }
         ),
@@ -98,5 +79,4 @@ export const eventRouter = createTRPCRouter({
                 }
             })
         ),
-
 });

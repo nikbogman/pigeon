@@ -1,7 +1,7 @@
 import { Paper, Flex, Group, Avatar, Text, Title, Box } from "@mantine/core";
 import { Contact } from "@prisma/client";
-import EditContactModal from "../Modals/Contact/EditContactModal";
-import RemoveContactModal from "../Modals/Contact/RemoveContactModal";
+import EditContactModal from "../Modals/ContactModals/EditContactModal";
+import RemoveContactModal from "../Modals/ContactModals/RemoveContactModal";
 
 const ContactCard: React.FC<{
     contact: Contact;

@@ -4,7 +4,7 @@ import { HiOutlineArrowRight } from "react-icons/hi";
 import { MdCalendarToday, MdGroup } from "react-icons/md";
 import PageLayout from "../../components/Layouts/PageLayout";
 import LoadingScreen from "../../components/LoadingScreen";
-import CreateEventModal from "../../components/Modals/Event/CreateEventModal";
+import CreateEventModal from "../../components/Modals/EventModals/CreateEventModal";
 import { TRPCRefetchContextProvider } from "../../context/TRPCRefetchContext";
 import useAuthenticated from "../../hooks/useAuthenticated";
 import { api } from "../../utils/api";
@@ -16,7 +16,7 @@ export default function EventsPage() {
     const { status } = useAuthenticated();
 
     const query = api.event.getAllIncludingAttendeesCount.useQuery(undefined, {
-        enabled: status === "authenticated"
+        enabled: status === "authenticated",
     });
 
     if (query.isLoading) return <LoadingScreen />;
