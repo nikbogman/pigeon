@@ -8,11 +8,12 @@ import { Flex, Group, Center, Text, Table, Chip, Container, TextInput, Button } 
 import { MdCalendarToday, MdGroup, MdSearch } from "react-icons/md";
 import TrashButton from "../../components/Buttons/Action/TrashButton";
 import StatusBadge from "../../components/StatusBadge";
-import { Status } from "@prisma/client";
 import { useState } from "react";
 import { RxCross2 } from "react-icons/rx"
 import EditButton from "../../components/Buttons/Action/EditButton";
 import EventCard from "../../components/Cards/EventCard";
+
+type Status = 'YES' | 'NO' | 'MAYBE' | 'UNKNOWN';
 
 export default function EventPage() {
     const { status } = useAuthenticated();
@@ -72,7 +73,7 @@ export default function EventPage() {
                         <Center>
                             <Chip.Group multiple={false} value={filter} onChange={v => setFilter(v as Status | 'ALL')}>
                                 <Chip value="ALL">All</Chip>
-                                {Object.values(Status).map((status, index) => <Chip
+                                {['YES', 'NO', 'MAYBE', 'UNKNOWN'].map((status, index) => <Chip
                                     key={index}
                                     color={['green', 'red', 'orange', 'gray'][index]}
                                     value={status}>
@@ -111,7 +112,7 @@ export default function EventPage() {
                             <tbody>{attendees.map(attendee => (
                                 <tr key={attendee.email}>
                                     <td>{attendee.name}</td>
-                                    <td><StatusBadge status={attendee.status} /></td>
+                                    <td><StatusBadge status={attendee.status as Status} /></td>
                                     <td><Flex justify="end"><TrashButton size={35} /></Flex></td>
                                 </tr>
                             ))}

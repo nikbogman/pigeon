@@ -1,33 +1,39 @@
 import { Modal, TextInput, Button, Group, Title } from "@mantine/core";
-import useToggle from "../../../hooks/useToggle";
-import { useForm } from "@mantine/form";
+import { useForm, zodResolver } from "@mantine/form";
 import { api } from "../../../utils/api";
 import EditButton from "../../Buttons/Action/EditButton";
 import { Contact } from "@prisma/client";
 import { useContextValue } from "../../../context/TRPCRefetchContext";
+import { z } from "zod";
+import { useToggle } from "@mantine/hooks";
 
-type Data = {
-    name: string;
-    email: string;
-}
-type Props = {
+const EditContactModal: React.FC<{
     contact: Contact;
-}
-
-const EditContactModal: React.FC<Props> = (props) => {
+}> = props => {
     const { refetch } = useContextValue();
     const mutation = api.contact.updateById.useMutation({
-        onSuccess: async () => refetch().then(toggle).then(form.reset),
+        onSuccess: async () => refetch().then(() => toggle()).then(form.reset),
     });
 
-    const [isToggled, toggle]: [boolean, () => void] = useToggle();
+    const [isToggled, toggle] = useToggle();
     const form = useForm({
-        initialValues: { name: "", email: "" } satisfies Data,
+        validate: zodResolver(
+            z.object({
+                name: z.string()
+                    .min(5, { message: "Name should have at least 5 letters" }),
+                email: z.string()
+                    .email({ message: "Valid email shoudl be provided" })
+            })
+        ),
+        initialValues: { name: "", email: "" } as {
+            name: string;
+            email: string;
+        },
     });
     const onSubmit = form.onSubmit(data => mutation.mutate({ id: props.contact.id, update: data }));
 
     return <>
-        <EditButton size={50} onClick={toggle} />
+        <EditButton size={50} onClick={() => toggle()} />
         <Modal
             centered
             opened={isToggled}

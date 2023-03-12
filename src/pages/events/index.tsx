@@ -1,4 +1,4 @@
-import { Center, Group, Text, Paper, Flex, Title, SimpleGrid, Box } from "@mantine/core";
+import { SimpleGrid } from "@mantine/core";
 import Link from "next/link";
 import { HiOutlineArrowRight } from "react-icons/hi";
 import { MdCalendarToday, MdGroup } from "react-icons/md";
@@ -47,7 +47,7 @@ export default function EventsPage() {
         <PageLayout>
             <TRPCRefetchContextProvider refetch={query.refetch}>
                 <main>
-                    {query.data ? <EventCards events={query.data} /> : <h1 className="p-10 text-center text-gray-500 font-medium">
+                    {query.data && query.data.length > 0 ? <EventCards events={query.data} /> : <h1 className="p-10 text-center text-gray-500 font-medium">
                         You have no events to manage. Press the button down to create one.
                     </h1>}
                 </main>

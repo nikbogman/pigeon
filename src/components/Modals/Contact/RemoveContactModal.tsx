@@ -1,22 +1,21 @@
 import TrashButton from "../../Buttons/Action/TrashButton";
 import { Button, Group, Modal, Flex, Text } from "@mantine/core";
-import useToggle from "../../../hooks/useToggle";
 import { FaExclamationCircle } from "react-icons/fa";
 import { api } from "../../../utils/api";
-import { useContext } from "react";
 import { useContextValue } from "../../../context/TRPCRefetchContext";
+import { useToggle } from "@mantine/hooks";
 
 const RemoveContactModal: React.FC<{
     id: string,
-}> = (props) => {
+}> = props => {
     const { refetch } = useContextValue();
 
-    const [isToggled, toggle]: [boolean, () => void] = useToggle();
+    const [isToggled, toggle] = useToggle();
     const mutation = api.contact.removeById.useMutation({
-        onSuccess: async () => refetch().then(toggle),
+        onSuccess: async () => refetch().then(() => toggle()),
     });
     return <>
-        <TrashButton size={50} onClick={toggle} />
+        <TrashButton size={50} onClick={() => toggle()} />
         <Modal
             centered
             opened={isToggled}
@@ -45,7 +44,7 @@ const RemoveContactModal: React.FC<{
                 </Button>
                 <Button
                     variant="default"
-                    onClick={toggle}
+                    onClick={() => toggle()}
                 >
                     No, cancel
                 </Button>

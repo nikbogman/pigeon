@@ -20,7 +20,7 @@ export default function ContactsPage() {
         <PageLayout>
             <TRPCRefetchContextProvider refetch={query.refetch}>
                 <main>
-                    {query.data ? <ContactCards contacts={query.data} /> :
+                    {query.data && query.data.length > 0 ? <ContactCards contacts={query.data} /> :
                         <h1 className="p-10 text-center text-gray-500 font-medium">
                             You have no contacts. Press the button down to add someone.
                         </h1>}

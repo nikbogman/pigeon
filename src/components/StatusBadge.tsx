@@ -9,6 +9,6 @@ const colors = {
 
 const StatusBadge: React.FC<{
     status: 'YES' | 'NO' | 'MAYBE' | 'UNKNOWN'
-}> = (props) => <Badge color={colors[props.status]}>{props.status}</Badge>
+}> = props => <Badge color={colors[props.status]}>{props.status}</Badge>
 
 export default StatusBadge;
