@@ -11,6 +11,7 @@ import StatusBadge from "../../components/StatusBadge";
 import { RxCross2 } from "react-icons/rx"
 import EventCard from "../../components/Cards/EventCard";
 import EditAttendeesModal from "../../components/Modals/AttendeeModals/EditAttendeesModal";
+import RemoveAttendeesModal from "../../components/Modals/AttendeeModals/RemoveAttendeesModal";
 import { TRPCRefetchContextProvider } from "../../context/TRPCRefetchContext";
 import { useSetState } from "@mantine/hooks";
 
@@ -26,12 +27,6 @@ export default function EventPage() {
         retry: false,
     });
 
-    if (query.isError && query.error.data) return <Error
-        statusCode={query.error.data.httpStatus || 500}
-        title={query.error.message}
-    />
-    if (query.isLoading || !query.data) return <LoadingScreen />;
-
     const [filter, setFilter] = useSetState<{
         collection: StatusType | 'ALL',
         name: string
@@ -39,6 +34,14 @@ export default function EventPage() {
         collection: 'ALL',
         name: ''
     })
+
+    if (query.isError && query.error.data) return <Error
+        statusCode={query.error.data.httpStatus || 500}
+        title={query.error.message}
+    />
+    if (query.isLoading || !query.data) return <LoadingScreen />;
+
+
 
     const filteredAttendees = (attendees => {
         let filtered = attendees;
@@ -131,7 +134,7 @@ export default function EventPage() {
                                 <tr key={attendee.contact.email}>
                                     <td>{attendee.contact.name}</td>
                                     <td><StatusBadge status={attendee.status as StatusType} /></td>
-                                    <td><Flex justify="end"><TrashButton size={35} /></Flex></td>
+                                    <td><RemoveAttendeesModal eventId={id} contactId={attendee.contactId} /></td>
                                 </tr>
                             ))}
                             </tbody>

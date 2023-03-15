@@ -5,10 +5,10 @@ import { useContextValue } from "../../../context/TRPCRefetchContext";
 import { api } from "../../../utils/api";
 import TrashButton from "../../Buttons/Action/TrashButton";
 
-const RemoveAttendeesModal: React.FC<{ id: string }> = props => {
+const RemoveAttendeesModal: React.FC<{ contactId: string, eventId: string }> = ({ contactId, eventId }) => {
     const { refetch } = useContextValue();
     const [isToggled, toggle] = useToggle();
-    const mutation = api.attendee.removeById.useMutation({
+    const mutation = api.attendee.remove.useMutation({
         onSuccess: async () => refetch().then(() => toggle()),
     });
 
@@ -37,7 +37,7 @@ const RemoveAttendeesModal: React.FC<{ id: string }> = props => {
                     loading={mutation.isLoading}
                     variant="filled"
                     color="red"
-                    onClick={() => mutation.mutate(props.id)}
+                    onClick={() => mutation.mutate({ eventId, contactId })}
                 >Yes, sure</Button>
                 <Button
                     variant="default"

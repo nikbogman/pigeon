@@ -4,11 +4,12 @@ import { zodResolver, useForm } from "@mantine/form";
 import { useRouter } from "next/router";
 import { FaArrowLeft, FaPlus } from "react-icons/fa";
 import { api } from "../../../utils/api";
-import MultiSelectContacts from "../../Inputs/MutiSelectContacts";
+// import MultiSelectContacts from "../../Inputs/MutiSelectContacts";
 import { z } from 'zod';
 import { useContextValue } from "../../../context/TRPCRefetchContext";
 import { useToggle } from "@mantine/hooks";
 import AlertError from "../../Alerts/AlertError";
+import EditAttendeesModal from "../AttendeeModals/EditAttendeesModal";
 
 const CreateEventModal: React.FC = () => {
     const router = useRouter();
@@ -60,25 +61,6 @@ const CreateEventModal: React.FC = () => {
         return mutation.mutate({ attendees, date: date!, ...mutationVariables })
     })
 
-    const ContactInput = () => {
-        if (query.data && query.data.length > 0)
-            return <MultiSelectContacts
-                {...form.getInputProps('contactIds')}
-                data={query.data.map(c => ({ value: c.id, description: c.email, label: c.name }))}
-            />
-        return <AlertError title="Bummer!">
-            You have contacts to add as attendees. You need to go back and add some.
-            <Button
-                leftIcon={<FaArrowLeft />}
-                mt="sm"
-                variant="outline"
-                color="red"
-                fullWidth
-                onClick={() => router.push('/contacts')}
-            >Click here to do so</Button>
-        </AlertError>
-    }
-
     return <>
         <div className="w-full fixed z-10 inset-x-0 bottom-1 group" onClick={() => toggle()}>
             <div className="rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 p-1 mx-1">
@@ -117,7 +99,10 @@ const CreateEventModal: React.FC = () => {
                         withAsterisk
                         {...form.getInputProps('date')}
                     />
-                    <ContactInput />
+                    {/* <EditAttendeesModal
+                        eventId={""}
+                        contactIds={[]}
+                    /> */}
                     <Group grow spacing="xs">
                         <Button
                             variant="default"

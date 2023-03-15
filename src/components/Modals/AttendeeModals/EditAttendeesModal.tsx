@@ -1,19 +1,16 @@
-import { Flex, Modal, Group, Button, Text } from "@mantine/core";
+import { Modal, Group, Button } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { useToggle } from "@mantine/hooks";
-import { FaExclamationCircle } from "react-icons/fa";
 import { useContextValue } from "../../../context/TRPCRefetchContext";
 import { api } from "../../../utils/api";
 import EditButton from "../../Buttons/Action/EditButton";
-import TrashButton from "../../Buttons/Action/TrashButton";
-import MultiSelectContacts from "../../Inputs/MutiSelectContacts";
 import { z } from "zod";
 import { Attendee } from "@prisma/client";
+import SelectContactsInput from "../../Inputs/SelectContactsInput";
 
 const EditAttendeesModal: React.FC<{ eventId: string, contactIds: string[] }> = props => {
     const { refetch } = useContextValue();
     const [isToggled, toggle] = useToggle();
-    const contactsQuery = api.contact.getAll.useQuery();
     const addMutation = api.attendee.add.useMutation();
     const removeMutation = api.attendee.remove.useMutation();
 
@@ -56,39 +53,41 @@ const EditAttendeesModal: React.FC<{ eventId: string, contactIds: string[] }> = 
         return refetch().then(() => toggle()).then(form.reset);
     });
 
-    if (!contactsQuery.data) return <>
-        <p>Wait</p>
-    </>
+    const handleClose = () => {
+        toggle();
+        form.reset();
+    }
+
     return <>
         <EditButton size={50} variant="outline" onClick={() => toggle()} />
         <Modal
             centered
-            fullScreen
             opened={isToggled}
-            onClose={() => toggle()}
+            withCloseButton={false}
+            yOffset={0}
+            onClose={handleClose}
         >
             <form onSubmit={handleSubmit}>
-                <MultiSelectContacts
-                    {...form.getInputProps('contactIds')}
-                    data={contactsQuery.data.map(c => ({ value: c.id, description: c.email, label: c.name }))}
+                <SelectContactsInput {...form.getInputProps('contactIds')}
+                    onChange={(index, id) => index >= 0 ? form.removeListItem('contactIds', index) : form.insertListItem(`contactIds`, id)}
                 />
-                <Button
-                    type="submit"
-                    fullWidth
-                    variant="outline"
-                    color="dark"
-                >
-                    Edit
-                </Button>
-                <Button
-                    fullWidth
-                    variant="default"
-                    onClick={() => {
-                        toggle();
-                    }}
-                >
-                    Cancel
-                </Button>
+                <Group noWrap grow>
+                    <Button
+                        type="submit"
+                        fullWidth
+                        variant="outline"
+                        color="dark"
+                    >
+                        Edit
+                    </Button>
+                    <Button
+                        fullWidth
+                        variant="default"
+                        onClick={handleClose}
+                    >
+                        Cancel
+                    </Button>
+                </Group>
             </form>
         </Modal>
     </>
