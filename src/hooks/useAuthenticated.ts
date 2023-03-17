@@ -3,12 +3,12 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 export default function useAuthenticated() {
-    const { status } = useSession();
+    const session = useSession();
     const router = useRouter();
 
     useEffect(() => {
-        if (status === "unauthenticated") router.push('/auth/signIn')
-    }, [status])
+        if (session.status === "unauthenticated") router.push('/auth/signIn')
+    }, [session.status])
 
-    return { status }
+    return session;
 }
