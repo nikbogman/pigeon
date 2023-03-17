@@ -15,7 +15,7 @@ const RemoveEventModal: React.FC<{
     });
 
     return <>
-        <TrashButton size={35} onClick={() => toggle()} />
+        <TrashButton size={50} onClick={() => toggle()} />
         <Modal
             centered
             opened={isToggled}

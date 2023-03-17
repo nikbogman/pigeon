@@ -49,8 +49,9 @@ const EditAttendeesModal: React.FC<{ eventId: string, contactIds: string[] }> = 
             ))
         await Promise.all(mutations);
 
-        // return callback chain because all other mutations do so onSuccess
-        return refetch().then(() => toggle()).then(form.reset);
+        await refetch();
+        toggle();
+        form.reset();
     });
 
     const handleClose = () => {

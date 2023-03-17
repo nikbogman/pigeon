@@ -1,15 +1,13 @@
-import { Button, TextInput, Textarea, Modal, Title, SimpleGrid, Group } from "@mantine/core";
+import { Button, TextInput, Textarea, Modal, Title, SimpleGrid, Group, Center } from "@mantine/core";
 import { DateTimePicker } from "@mantine/dates";
 import { zodResolver, useForm } from "@mantine/form";
 import { useRouter } from "next/router";
-import { FaArrowLeft, FaPlus } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 import { api } from "../../../utils/api";
-// import MultiSelectContacts from "../../Inputs/MutiSelectContacts";
 import { z } from 'zod';
 import { useContextValue } from "../../../context/TRPCRefetchContext";
 import { useToggle } from "@mantine/hooks";
-import AlertError from "../../Alerts/AlertError";
-import EditAttendeesModal from "../AttendeeModals/EditAttendeesModal";
+import SelectContactsInput from "../../Inputs/SelectContactsInput";
 
 const CreateEventModal: React.FC = () => {
     const router = useRouter();
@@ -72,10 +70,14 @@ const CreateEventModal: React.FC = () => {
         <Modal
             centered
             fullScreen
+            withCloseButton={false}
             opened={isToggled}
-            title={<Title order={3}>Create event and invite people</Title>}
             onClose={toggle}
+            yOffset={0}
         >
+            <Center h={100}>
+                <Title order={3}>Create event and invite people</Title>
+            </Center>
             <form onSubmit={handleSubmit}>
                 <SimpleGrid cols={1}>
                     <TextInput
@@ -99,10 +101,10 @@ const CreateEventModal: React.FC = () => {
                         withAsterisk
                         {...form.getInputProps('date')}
                     />
-                    {/* <EditAttendeesModal
-                        eventId={""}
-                        contactIds={[]}
-                    /> */}
+                    <SelectContactsInput
+                        {...form.getInputProps('contactIds')}
+                        onChange={(index, id) => index >= 0 ? form.removeListItem('contactIds', index) : form.insertListItem(`contactIds`, id)}
+                    />
                     <Group grow spacing="xs">
                         <Button
                             variant="default"

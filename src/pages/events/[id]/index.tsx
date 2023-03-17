@@ -1,26 +1,27 @@
 import { useRouter } from "next/router";
-import PageLayout from "../../components/Layouts/PageLayout";
-import useAuthenticated from "../../hooks/useAuthenticated";
-import { api } from "../../utils/api";
-import Error from "next/error";
-import LoadingScreen from "../../components/LoadingScreen";
-import { Flex, Group, Center, Text, Table, Chip, Container, TextInput } from "@mantine/core";
-import { MdCalendarToday, MdGroup, MdSearch } from "react-icons/md";
-import TrashButton from "../../components/Buttons/Action/TrashButton";
-import StatusBadge from "../../components/StatusBadge";
-import { RxCross2 } from "react-icons/rx"
-import EventCard from "../../components/Cards/EventCard";
-import EditAttendeesModal from "../../components/Modals/AttendeeModals/EditAttendeesModal";
-import RemoveAttendeesModal from "../../components/Modals/AttendeeModals/RemoveAttendeesModal";
-import { TRPCRefetchContextProvider } from "../../context/TRPCRefetchContext";
 import { useSetState } from "@mantine/hooks";
+import { Flex, Group, Center, Chip, TextInput, Table, Container, Text } from "@mantine/core";
+import { MdCalendarToday, MdGroup, MdSearch } from "react-icons/md";
+import { RxCross2 } from "react-icons/rx";
+import TrashButton from "../../../components/Buttons/Action/TrashButton";
+import EventCard from "../../../components/Cards/EventCard";
+import PageLayout from "../../../components/Layouts/PageLayout";
+import LoadingScreen from "../../../components/LoadingScreen";
+import EditAttendeesModal from "../../../components/Modals/AttendeeModals/EditAttendeesModal";
+import RemoveAttendeesModal from "../../../components/Modals/AttendeeModals/RemoveAttendeesModal";
+import StatusBadge from "../../../components/StatusBadge";
+import { TRPCRefetchContextProvider } from "../../../context/TRPCRefetchContext";
+import useAuthenticated from "../../../hooks/useAuthenticated";
+import { api } from "../../../utils/api";
+import Error from "next/error";
+import RemoveEventModal from "../../../components/Modals/EventModals/RemoveEventModal";
 
 type StatusType = 'YES' | 'NO' | 'MAYBE' | 'UNKNOWN';
 const StatusList: StatusType[] = ['YES', 'NO', 'MAYBE', 'UNKNOWN'];
 
 export default function EventPage() {
     const { status } = useAuthenticated();
-    const { query: { eventId } } = useRouter();
+    const { query: { id: eventId } } = useRouter();
     const id = eventId as string;
     const query = api.event.getByIdIncludingAttendees.useQuery(id, {
         enabled: status === "authenticated" && !!id,
@@ -38,7 +39,7 @@ export default function EventPage() {
     if (query.isError && query.error.data) return <Error
         statusCode={query.error.data.httpStatus || 500}
         title={query.error.message}
-    />
+    />;
     if (query.isLoading || !query.data) return <LoadingScreen />;
 
 
@@ -63,7 +64,7 @@ export default function EventPage() {
                     <EventCard>
                         <EventCard.Heading
                             title={query.data.title}
-                            rightButton={<TrashButton size={50} />}
+                            rightButton={<RemoveEventModal id={id} />}
                         >
                             <EventCard.SubHeading
                                 icon={MdCalendarToday}
